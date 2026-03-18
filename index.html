@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WanderByJose Microneedling Advisor</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body { background: #f9fafb; font-family: 'Inter', sans-serif; }
+  .fade { transition: all 0.5s ease-in-out; }
+</style>
+</head>
+<body class="min-h-screen flex flex-col items-center p-4">
+
+<!-- Logo -->
+<div id="logo" class="w-full flex justify-center mb-6">
+  <img src="https://drive.google.com/uc?export=view&id=1MsVVwdzh3FnNR5itG8LEqOhML8DXMQkb" alt="WanderByJose" class="w-48">
+</div>
+
+<!-- Input Form -->
+<div id="form-container" class="w-full max-w-3xl bg-white p-6 rounded-xl shadow-lg fade">
+  <h1 class="text-2xl font-bold mb-4 text-center">Microneedling Advisor</h1>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+    <!-- Sex -->
+    <div>
+      <label class="font-medium">Sex</label>
+      <select id="sex" class="w-full border rounded p-2">
+        <option value="male">Male</option>
+        <option value="female">Female</option>
+      </select>
+    </div>
+
+    <!-- Shave (conditional) -->
+    <div>
+      <label class="font-medium">Shave (for male)</label>
+      <select id="shave" class="w-full border rounded p-2">
+        <option value="yes">Yes</option>
+        <option value="no">No</option>
+      </select>
+    </div>
+
+    <!-- Goals -->
+    <div class="col-span-2">
+      <label class="font-medium">Goals (select all that apply)</label>
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-2 mt-1">
+        <label><input type="checkbox" value="Anti-aging"> Anti-aging</label>
+        <label><input type="checkbox" value="Recovery"> Recovery</label>
+        <label><input type="checkbox" value="Glow"> Glow</label>
+        <label><input type="checkbox" value="Brightening"> Brightening</label>
+        <label><input type="checkbox" value="Hair"> Hair</label>
+      </div>
+    </div>
+
+    <!-- Skin State -->
+    <div>
+      <label class="font-medium">Skin State</label>
+      <select id="skin" class="w-full border rounded p-2">
+        <option value="normal">Normal</option>
+        <option value="sensitive">Sensitive</option>
+        <option value="irritated">Irritated</option>
+      </select>
+    </div>
+
+    <!-- Sun Exposure -->
+    <div>
+      <label class="font-medium">Sun Exposure</label>
+      <select id="sun" class="w-full border rounded p-2">
+        <option value="low">Low</option>
+        <option value="medium">Medium</option>
+        <option value="high">High</option>
+      </select>
+    </div>
+
+    <!-- Season -->
+    <div>
+      <label class="font-medium">Season</label>
+      <select id="season" class="w-full border rounded p-2">
+        <option value="spring">Spring</option>
+        <option value="summer">Summer</option>
+        <option value="autumn">Autumn</option>
+        <option value="winter">Winter</option>
+      </select>
+    </div>
+
+    <!-- Events -->
+    <div>
+      <label class="font-medium">Event Timeline</label>
+      <select id="events" class="w-full border rounded p-2">
+        <option value="less7">&lt; 7 days</option>
+        <option value="more7">&gt; 7 days</option>
+      </select>
+    </div>
+
+  </div>
+
+  <button onclick="generateRecommendations()" class="mt-6 w-full bg-gradient-to-r from-indigo-500 to-purple-500 text-white p-3 rounded-lg font-semibold hover:opacity-90">Get Recommendations</button>
+</div>
+
+<!-- Recommendations -->
+<div id="results" class="w-full max-w-5xl mt-6 hidden fade"></div>
+
+<script>
+
+// -------- PRODUCTS DATA --------
+const products = [
+{ name: "Jeunetique EXO", benefits: "Deep regeneration; Collagen support; Skin repair; Anti-aging", ingredients:"Exosomes, PDRN, Collagen peptides", goals:["Anti-aging","Recovery","Glow"], image:"https://meamoshop.com/wp-content/uploads/2024/10/NEW-Jeunetique-Exo-1.jpg", link:"https://meamoshop.com/product/jeunetique-exo" },
+{ name: "Jeunetique NAD+", benefits: "Cellular energy support; Hydration; Recovery; Reduces redness", ingredients:"NAD+, HA, Peptides", goals:["Maintenance","Recovery","Glow"], image:"https://meamoshop.com/wp-content/uploads/2026/01/Jeunetique-NAD-1.jpg", link:"https://meamoshop.com/product/jeunetique-nad" },
+{ name: "Velatox GF11", benefits: "Collagen stimulation; Firmness; Elasticity; Skin remodeling", ingredients:"EGF, FGF, Peptides", goals:["Anti-aging","Collagen"], image:"https://meamoshop.com/wp-content/uploads/2023/12/13.jpg", link:"https://meamoshop.com/product/velatox-gf11" },
+{ name: "Hanheal Exosome Facial Rejuvenation", benefits:"Hydration; Glow; Texture smoothing; Regeneration", ingredients:"Exosomes, HA", goals:["Recovery","Glow","Maintenance"], image:"https://meamoshop.com/wp-content/uploads/2026/01/HANHEAL-FACIAL-REJ.jpg", link:"https://meamoshop.com/product/hanheal-facial" },
+{ name: "Curenex", benefits:"Tissue repair; Reduces redness; Texture improvement; Hydration", ingredients:"PDRN, Peptides, HA", goals:["Recovery","Texture","Redness"], image:"https://meamoshop.com/wp-content/uploads/2023/10/Curenex-e1732073067298.png", link:"https://meamoshop.com/product/curenex" },
+{ name: "Jeunetique Eyes Pro", benefits:"Eye area hydration; Brightening; Fine line reduction; Regeneration", ingredients:"PN, HA, Peptides", goals:["Maintenance","Texture"], image:"https://meamoshop.com/wp-content/uploads/2025/03/Jeunetique-Eyes-Pro-Front3.jpg", link:"https://meamoshop.com/product/jeunetique-eyes-pro" },
+{ name: "Soonsu Ultra White", benefits:"Brightening; Antioxidant protection; Tone improvement; Clarity", ingredients:"Glutathione, Vitamin C, Arbutin", goals:["Brightening","Texture"], image:"https://meamoshop.com/wp-content/uploads/2025/12/Soonsu-Ultra-White-1-1.jpg", link:"https://meamoshop.com/product/soonsu-ultra-white" },
+{ name: "Regenovue PN", benefits:"Deep hydration; Collagen support; Skin repair; Plumpness", ingredients:"PN, HA", goals:["Recovery","Maintenance"], image:"https://meamoshop.com/wp-content/uploads/2024/05/1-2.jpg", link:"https://meamoshop.com/product/regenovue-pn" },
+{ name: "Kiara Reju", benefits:"Skin regeneration; Tone improvement; Hydration; Repair", ingredients:"Polynucleotides", goals:["Recovery","Texture"], image:"https://meamoshop.com/wp-content/uploads/2022/06/1-2.jpg", link:"https://meamoshop.com/product/kiara-reju" },
+{ name: "YouthFill PN", benefits:"Regeneration; Collagen production; Texture improvement; Hydration", ingredients:"PN", goals:["Recovery","Anti-aging"], image:"https://meamoshop.com/wp-content/uploads/2024/10/YouthFill-PN-Front-1.jpg", link:"https://meamoshop.com/product/youthfill-pn" },
+{ name: "YouthFill PN Plus", benefits:"Hydration; Regeneration; Elasticity support; Comfort", ingredients:"PN, HA, Lidocaine", goals:["Recovery","Maintenance"], image:"https://meamoshop.com/wp-content/uploads/2024/10/YouthFill-PN-Front.jpg", link:"https://meamoshop.com/product/youthfill-pn-plus" },
+{ name: "Miracle H Skin Booster", benefits:"Deep hydration; Collagen support; Anti-aging; Firmness", ingredients:"PCL, HA", goals:["Anti-aging","Maintenance"], image:"https://meamoshop.com/wp-content/uploads/2022/04/Miracle-H_1-1.jpg", link:"https://meamoshop.com/product/miracle-h" },
+{ name: "Miracle X", benefits:"Firmness; Collagen support; Texture improvement; Tightening", ingredients:"PCL, Peptides", goals:["Anti-aging","Texture"], image:"https://meamoshop.com/wp-content/uploads/2025/11/1-1.jpg", link:"https://meamoshop.com/product/miracle-x" },
+{ name: "Miracle L Skin Booster", benefits:"Collagen induction; Wrinkle reduction; Tightness; Firmness", ingredients:"PCL", goals:["Anti-aging","Collagen"], image:"https://meamoshop.com/wp-content/uploads/2022/04/Miracle-L_1.jpg", link:"https://meamoshop.com/product/miracle-l" },
+{ name: "Miracle Touch BR", benefits:"UV damage protection; Pigmentation reduction; Skin nourishment", ingredients:"Peptides, Niacinamide, Vitamins B3 & C", goals:["Brightening","Texture"], image:"https://meamoshop.com/wp-content/uploads/2022/04/Touch-BR_1.jpg", link:"https://meamoshop.com/product/miracle-touch-br" },
+{ name: "Hyaron Sodium Hyaluronate", benefits:"Hydration; Barrier support; Plumping", ingredients:"HA", goals:["Maintenance","Recovery"], image:"https://meamoshop.com/wp-content/uploads/2022/04/Hyaron-syringes.jpg", link:"https://meamoshop.com/product/hyaron" },
+{ name: "Dermaheal HSR", benefits:"Hydration; Collagen stimulation; Brightness", ingredients:"Growth factors, Peptides", goals:["Anti-aging","Brightening"], image:"https://meamoshop.com/wp-content/uploads/2022/06/34.jpg", link:"https://meamoshop.com/product/dermaheal-hsr" },
+{ name: "Etrebelle PN", benefits:"Skin regeneration; Texture improvement; Hydration; Glow", ingredients:"PN", goals:["Recovery","Glow"], image:"https://meamoshop.com/wp-content/uploads/2026/01/Etrebelle-PN.jpg", link:"https://meamoshop.com/product/etrebelle-pn" },
+{ name: "PURIHILO PN", benefits:"Skin repair; Hydration; Recovery; Glow", ingredients:"PN", goals:["Recovery","Glow"], image:"https://meamoshop.com/wp-content/uploads/2026/01/Puri-HILO-PN.jpg", link:"https://meamoshop.com/product/purihilo-pn" },
+{ name: "Puri COLL Rh", benefits:"Collagen stimulation; Firmness; Texture improvement; Hydration", ingredients:"Peptides, HA", goals:["Anti-aging","Collagen"], image:"https://meamoshop.com/wp-content/uploads/2026/01/Puri-COLL-Rh.jpg", link:"https://meamoshop.com/product/puri-coll-rh" },
+{ name: "Hanheal Exosome Hair Filler", benefits:"Stimulates follicle regeneration; Improves scalp health; Enhances hair density; Hydrates and soothes scalp", ingredients:"Exosomes, Vitamin C, Biotin, Peptides, Rosemary & Eucalyptus Oils", goals:["Hair"], image:"https://meamoshop.com/wp-content/uploads/2025/11/15.jpg", link:"https://meamoshop.com/product/hanheal-hair" },
+{ name: "HAIRNA Exosome Hair Fill", benefits:"Scalp regeneration & follicle repair; Moisture balance; Enhanced hair density; Soothing & sensitivity relief", ingredients:"ASC Exosomes, Biotinyl Tripeptide‑1, Panthenol, Copper Tripeptide‑1", goals:["Hair"], image:"https://meamoshop.com/wp-content/uploads/2025/11/HAIRNA-Exosome-Hair-Fill.jpg", link:"https://meamoshop.com/product/hairna-exosome-hair-fill" },
+{ name: "Dermaheal HL", benefits:"Stimulates hair growth; Strengthens hair strands; Nourishes scalp; Improves follicle environment", ingredients:"Hyaluronic Acid, Peptides, Vitamins", goals:["Hair"], image:"https://meamoshop.com/wp-content/uploads/2022/06/35.jpg", link:"https://meamoshop.com/product/dermaheal-hl" },
+{ name: "2Xsome Skin & Hair Booster", benefits:"Revitalizes scalp + skin; Exosome‑driven regeneration; Supports follicle and skin renewal; Boosts hydration", ingredients:"Exosome powder, PDRN, Sodium Hyaluronate, Copper tripeptide‑1", goals:["Hair"], image:"https://meamoshop.com/wp-content/uploads/2022/07/15.jpg", link:"https://meamoshop.com/product/2xsome-skin-hair" }
+];
+
+// -------- FACIAL ZONES AND DEPTHS --------
+const zones = [
+  { name:"Forehead", baseDepth:1.0 },
+  { name:"Cheeks", baseDepth:1.25 },
+  { name:"Nose", baseDepth:0.5 },
+  { name:"Chin", baseDepth:1.0 },
+  { name:"Jawline", baseDepth:1.25 },
+  { name:"Under Eyes", baseDepth:0.25 }
+];
+
+// -------- GENERATE RECOMMENDATIONS FUNCTION --------
+function generateRecommendations(){
+  const sex = document.getElementById("sex").value;
+  const shave = document.getElementById("shave").value;
+  const skin = document.getElementById("skin").value;
+  const sun = document.getElementById("sun").value;
+  const season = document.getElementById("season").value;
+  const events = document.getElementById("events").value;
+  const goals = Array.from(document.querySelectorAll('input[type=checkbox]:checked')).map(cb=>cb.value);
+
+  // Score products
+  let scored = products.map(p=>{
+    let score = 0;
+    goals.forEach(g=>{
+      if(p.goals.includes(g)) score += 2;
+    });
+    // Skin sensitivity reduces depth preference
+    if(skin==="sensitive" || skin==="irritated") score += 1;
+    // Sun / Season modifier
+    if(season==="autumn" || season==="winter") score += 1;
+    return {...p, score};
+  });
+
+  // Sort top 3
+  scored.sort((a,b)=>b.score-a.score);
+  const top3 = scored.slice(0,3);
+
+  // Build HTML output
+  let html = `<div class="grid md:grid-cols-3 gap-6">`;
+  top3.forEach(p=>{
+    html += `<div class="bg-white rounded-xl shadow-lg p-4 text-center fade">
+      <img src="${p.image}" class="w-full h-48 object-cover rounded-lg mb-3">
+      <h2 class="font-bold text-lg mb-1">${p.name}</h2>
+      <p class="text-sm mb-1"><strong>Benefits:</strong> ${p.benefits}</p>
+      <p class="text-sm mb-2"><strong>Ingredients:</strong> ${p.ingredients}</p>
+      <a href="${p.link}" target="_blank" class="text-indigo-600 font-semibold hover:underline">View Product</a>
+    </div>`;
+  });
+  html += `</div>`;
+
+  // Face map with depth & cartridge suggestion
+  html += `<div class="mt-6 bg-white p-4 rounded-xl shadow-lg">
+    <h2 class="text-xl font-bold mb-3 text-center">Face Map & Depth Recommendation</h2>
+    <ul class="list-disc ml-5">`;
+  zones.forEach(z=>{
+    let depth = z.baseDepth;
+    if(skin==="sensitive" || skin==="irritated") depth *= 0.8;
+    if(season==="autumn" || season==="winter") depth *= 1.1;
+    html += `<li><strong>${z.name}:</strong> ${depth.toFixed(2)} mm</li>`;
+  });
+  html += `</ul>
+    <p class="mt-3"><strong>Dr Pen:</strong> 36-42 needles full-face, 12-36 small areas</p>
+    <p><strong>Derminator 2:</strong> Single needle for precision, 9-pin for small areas, 12-pin for medium/full-face</p>
+  </div>`;
+
+  // Disclaimer + discount
+  html += `<div class="mt-6 p-4 bg-yellow-50 rounded-lg text-center text-sm">
+    <p>This is based on experience & product data. Results may vary. Consult a licensed professional.</p>
+    <p class="mt-1 font-semibold">Use code <span class="text-indigo-600">JOSE</span> for 15% discount at <a href="https://www.meamoshop.com" target="_blank" class="underline">www.meamoshop.com</a></p>
+  </div>`;
+
+  document.getElementById
