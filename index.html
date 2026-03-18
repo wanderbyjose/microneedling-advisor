@@ -1,99 +1,179 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>WanderByJose - Microneedling Guide</title>
-  <style>
-    body {
-      font-family: "Helvetica Neue", sans-serif;
-      background-color: #f5f5f7;
-      margin: 0;
-      padding: 0;
-    }
-    header {
-      background-color: #000;
-      color: #fff;
-      padding: 15px;
-      text-align: center;
-      font-size: 24px;
-    }
-    .container {
-      padding: 20px;
-      max-width: 900px;
-      margin: auto;
-    }
-    label {
-      display: block;
-      margin-top: 15px;
-      font-weight: bold;
-    }
-    select, button {
-      width: 100%;
-      padding: 10px;
-      margin-top: 5px;
-      font-size: 16px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-    }
-    button {
-      background-color: #000;
-      color: #fff;
-      cursor: pointer;
-      margin-top: 20px;
-    }
-    button:hover {
-      background-color: #333;
-    }
-    #recommendations {
-      margin-top: 30px;
-    }
-    .product-card {
-      border-radius: 12px;
-      background: #fff;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      padding: 20px;
-      margin-bottom: 20px;
-    }
-    .product-card img {
-      width: 100%;
-      border-radius: 12px;
-      margin-bottom: 10px;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WanderByJose - Microneedling Guide</title>
+<style>
+  /* --- Premium Uber-style design --- */
+  @import url('https://fonts.googleapis.com/css2?family=Helvetica+Neue:wght@400;500;700&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Helvetica Neue', sans-serif; background: #f5f5f7; color: #111; }
+
+  header {
+    background: #000;
+    color: #fff;
+    padding: 20px;
+    text-align: center;
+    font-size: 24px;
+    font-weight: 700;
+  }
+
+  .container { max-width: 900px; margin: 30px auto; padding: 20px; }
+
+  h2 { font-weight: 700; margin-bottom: 20px; color: #222; }
+
+  label { display: block; margin: 15px 0 5px; font-weight: 500; }
+  select, button { width: 100%; padding: 12px; border-radius: 10px; font-size: 16px; border: 1px solid #ccc; }
+  select[multiple] { height: 120px; }
+
+  button {
+    background: #000;
+    color: #fff;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: background 0.3s;
+  }
+  button:hover { background: #333; }
+
+  /* --- Multi-page transitions --- */
+  .screen { display: none; opacity: 0; transition: opacity 0.5s ease-in-out; }
+  .screen.active { display: block; opacity: 1; }
+
+  /* --- Product cards --- */
+  .product-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 20px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+    transition: transform 0.3s;
+  }
+  .product-card:hover { transform: translateY(-4px); }
+  .product-card img { width: 100%; border-radius: 12px; margin-bottom: 10px; }
+
+  /* --- Face map styling --- */
+  .face-map {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 20px;
+  }
+  .zone {
+    background: #fff;
+    padding: 15px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    font-size: 14px;
+  }
+
+  /* --- Disclaimer --- */
+  .disclaimer { margin-top: 30px; font-size: 13px; color: #555; background: #eee; padding: 15px; border-radius: 10px; }
+</style>
 </head>
 <body>
 
 <header>WanderByJose</header>
 <div class="container">
-  <h2>Microneedling Recommendations</h2>
 
-  <label>Sex:</label>
-  <select id="userSex">
-    <option value="male">Male</option>
-    <option value="female">Female</option>
-  </select>
+  <!-- --- Screen 1: Inputs --- -->
+  <div id="screen1" class="screen active">
+    <h2>Microneedling Recommendations</h2>
 
-  <label>Beard / Moustache:</label>
-  <select id="beard">
-    <option value="yes">Yes</option>
-    <option value="no">No</option>
-  </select>
+    <label>Sex:</label>
+    <select id="userSex">
+      <option value="male">Male</option>
+      <option value="female">Female</option>
+    </select>
 
-  <label>Goals (multiple allowed):</label>
-  <select multiple id="goals">
-    <option value="anti-aging">Anti-aging</option>
-    <option value="recovery">Recovery</option>
-    <option value="glow">Glow</option>
-    <option value="brightening">Brightening</option>
-    <option value="hair">Hair regrowth</option>
-  </select>
+    <label>Beard / Moustache:</label>
+    <select id="beard">
+      <option value="yes">Yes</option>
+      <option value="no">No</option>
+    </select>
 
-  <button onclick="calculateRecommendations()">Get Recommendations</button>
+    <label>Skin State:</label>
+    <select id="skinState">
+      <option value="normal">Normal</option>
+      <option value="sensitive">Sensitive / Irritated</option>
+    </select>
 
-  <div id="recommendations"></div>
+    <label>Sun Exposure:</label>
+    <select id="sunExposure">
+      <option value="low">Low</option>
+      <option value="medium">Medium</option>
+      <option value="high">High</option>
+    </select>
+
+    <label>Season:</label>
+    <select id="season">
+      <option value="spring">Spring</option>
+      <option value="summer">Summer</option>
+      <option value="autumn">Autumn</option>
+      <option value="winter">Winter</option>
+    </select>
+
+    <label>Goals (multiple):</label>
+    <select multiple id="goals">
+      <option value="anti-aging">Anti-aging</option>
+      <option value="recovery">Recovery</option>
+      <option value="glow">Glow</option>
+      <option value="brightening">Brightening</option>
+      <option value="hair">Hair regrowth</option>
+    </select>
+
+    <label>Events in next 7 days:</label>
+    <select id="events">
+      <option value="no">No</option>
+      <option value="yes">Yes</option>
+    </select>
+
+    <label>Asymmetry:</label>
+    <select id="asymmetry">
+      <option value="no">No</option>
+      <option value="yes">Yes</option>
+    </select>
+
+    <button onclick="goToFaceMap()">Next: Face Map & Depth</button>
+  </div>
+
+  <!-- --- Screen 2: Face Map & Depth --- -->
+  <div id="screen2" class="screen">
+    <h2>Face Map & Needle Depth</h2>
+    <div class="face-map">
+      <div class="zone">Forehead<br>Depth: <span id="foreheadDepth">0.50mm</span><br>Dr. Pen: 9/12<br>Derminator2: 9</div>
+      <div class="zone">Cheeks<br>Depth: <span id="cheeksDepth">1.00mm</span><br>Dr. Pen: 9/12<br>Derminator2: 12</div>
+      <div class="zone">Jaw<br>Depth: <span id="jawDepth">1.25mm</span><br>Dr. Pen: 12<br>Derminator2: 12</div>
+      <div class="zone">Chin<br>Depth: <span id="chinDepth">1.00mm</span><br>Dr. Pen: 9<br>Derminator2: 9</div>
+      <div class="zone">Eye Area<br>Depth: <span id="eyeDepth">0.25mm</span><br>Dr. Pen: 1/9<br>Derminator2: 1</div>
+      <div class="zone">Neck<br>Depth: <span id="neckDepth">0.75mm</span><br>Dr. Pen: 9<br>Derminator2: 9</div>
+    </div>
+
+    <button onclick="calculateRecommendations()">Next: See Products</button>
+    <button onclick="backToInputs()">Back</button>
+  </div>
+
+  <!-- --- Screen 3: Product Recommendations --- -->
+  <div id="screen3" class="screen">
+    <h2>Top Recommendations</h2>
+    <div id="recommendations"></div>
+    <button onclick="backToFaceMap()">Back</button>
+
+    <div class="disclaimer">
+      <p>This tool is my personal routine calculator. It is for educational purposes only. 
+      No liability is assumed. Use at your own discretion.</p>
+      <p>Sources: PubMed, product studies, manufacturer data</p>
+    </div>
+  </div>
+
 </div>
 
 <script>
+/* --- Full products JSON --- */
 const productsData = [
   {
     "Product": "Jeunetique EXO",
@@ -116,7 +196,146 @@ const productsData = [
     "Goals": "Anti-aging, Collagen",
     "Image URL": "https://meamoshop.com/wp-content/uploads/2023/12/13.jpg"
   },
-  ...
+  {
+    "Product": "Hanheal Exosome Facial Rejuvenation",
+    "Benefits": "Hydration; Glow; Texture smoothing; Regeneration",
+    "Ingredients": "Exosomes, HA",
+    "Goals": "Recovery, Glow, Maintenance",
+    "Image URL": "https://meamoshop.com/wp-content/uploads/2026/01/HANHEAL-FACIAL-REJ.jpg"
+  },
+  {
+    "Product": "Curenex",
+    "Benefits": "Tissue repair; Reduces redness; Texture improvement; Hydration",
+    "Ingredients": "PDRN, Peptides, HA",
+    "Goals": "Recovery, Texture, Redness",
+    "Image URL": "https://meamoshop.com/wp-content/uploads/2023/10/Curenex-e1732073067298.png"
+  },
+  {
+    "Product": "Jeunetique Eyes Pro",
+    "Benefits": "Eye area hydration; Brightening; Fine line reduction; Regeneration",
+    "Ingredients": "PN, HA, Peptides",
+    "Goals": "Maintenance, Texture",
+    "Image URL": "https://meamoshop.com/wp-content/uploads/2025/03/Jeunetique-Eyes-Pro-Front3.jpg"
+  },
+  {
+    "Product": "Soonsu Ultra White",
+    "Benefits": "Brightening; Antioxidant protection; Tone improvement; Clarity",
+    "Ingredients": "Glutathione, Vitamin C, Arbutin",
+    "Goals": "Brightening, Texture",
+    "Image URL": "https://meamoshop.com/wp-content/uploads/2025/12/Soonsu-Ultra-White-1-1.jpg"
+  },
+  {
+    "Product": "Regenovue PN",
+    "Benefits": "Deep hydration; Collagen support; Skin repair; Plumpness",
+    "Ingredients": "PN, HA",
+    "Goals": "Recovery, Maintenance",
+    "Image URL": "https://meamoshop.com/wp-content/uploads/2024/05/1-2.jpg"
+  },
+  {
+    "Product": "Kiara Reju",
+    "Benefits": "Skin regeneration; Tone improvement; Hydration; Repair",
+    "Ingredients": "Polynucleotides (likely)",
+    "Goals": "Recovery, Texture",
+    "Image URL": "https://meamoshop.com/wp-content/uploads/2022/06/1-2.jpg"
+  },
+  {
+    "Product": "YouthFill PN",
+    "Benefits": "Regeneration; Collagen production; Texture improvement; Hydration",
+    "Ingredients": "PN",
+    "Goals": "Recovery, Anti-aging",
+    "Image URL": "https://meamoshop.com/wp-content/uploads/2024/10/YouthFill-PN-Front-1.jpg"
+  },
+  {
+    "Product": "YouthFill PN Plus",
+    "Benefits": "Hydration; Regeneration; Elasticity support; Comfort",
+    "Ingredients": "PN, HA, Lidocaine",
+    "Goals": "Recovery, Maintenance",
+    "Image URL": "https://meamoshop.com/wp-content/uploads/2024/10/YouthFill-PN-Front.jpg"
+  },
+  {
+    "Product": "Miracle H Skin Booster",
+    "Benefits": "Deep hydration; Collagen support; Anti-aging; Firmness",
+    "Ingredients": "PCL, HA",
+    "Goals": "Anti-aging, Maintenance",
+    "Image URL": "https://meamoshop.com/wp-content/uploads/2022/04/Miracle-H_1-1.jpg"
+  },
+  {
+    "Product": "Miracle X",
+    "Benefits": "Firmness; Collagen support; Texture improvement; Tightening",
+    "Ingredients": "PCL, Peptides",
+    "Goals": "Anti-aging, Texture",
+    "Image URL": "https://meamoshop.com/wp-content/uploads/2025/11/1-1.jpg"
+  },
+  {
+    "Product": "Miracle L Skin Booster",
+    "Benefits": "Collagen induction; Wrinkle reduction; Tightness; Firmness",
+    "Ingredients": "PCL",
+    "Goals": "Anti-aging, Collagen",
+    "Image URL": "https://meamoshop.com/wp-content/uploads/2022/04/Miracle-L_1.jpg"
+  },
+  {
+    "Product": "Miracle Touch BR",
+    "Benefits": "UV damage protection; Pigmentation reduction; Skin nourishment",
+    "Ingredients": "Peptides, Niacinamide, Vitamins B3 & C",
+    "Goals": "Brightening, Texture",
+    "Image URL": "https://meamoshop.com/wp-content/uploads/2022/04/Touch-BR_1.jpg"
+  },
+  {
+    "Product": "Hyaron Sodium Hyaluronate",
+    "Benefits": "Hydration; Barrier support; Plumping",
+    "Ingredients": "HA",
+    "Goals": "Maintenance, Recovery",
+    "Image URL": "https://meamoshop.com/wp-content/uploads/2022/04/Hyaron-syringes.jpg"
+  },
+  {
+    "Product": "Dermaheal HSR",
+    "Benefits": "Hydration; Collagen stimulation; Brightness",
+    "Ingredients": "Growth factors, Peptides",
+    "Goals": "Anti-aging, Brightening",
+    "Image URL": "https://meamoshop.com/wp-content/uploads/2022/06/34.jpg"
+  },
+  {
+    "Product": "Etrebelle PN",
+    "Benefits": "Skin regeneration; Texture improvement; Hydration; Glow",
+    "Ingredients": "PN",
+    "Goals": "Recovery, Glow",
+    "Image URL": "https://meamoshop.com/wp-content/uploads/2026/01/Etrebelle-PN.jpg"
+  },
+  {
+    "Product": "PURIHILO PN",
+    "Benefits": "Skin repair; Hydration; Recovery; Glow",
+    "Ingredients": "PN",
+    "Goals": "Recovery, Glow",
+    "Image URL": "https://meamoshop.com/wp-content/uploads/2026/01/Puri-HILO-PN.jpg"
+  },
+  {
+    "Product": "Puri COLL Rh",
+    "Benefits": "Collagen stimulation; Firmness; Texture improvement; Hydration",
+    "Ingredients": "Peptides, HA",
+    "Goals": "Anti-aging, Collagen",
+    "Image URL": "https://meamoshop.com/wp-content/uploads/2026/01/Puri-COLL-Rh.jpg"
+  },
+  {
+    "Product": "Hanheal Exosome Hair Filler",
+    "Benefits": "Stimulates follicle regeneration; Improves scalp health; Enhances hair density; Hydrates and soothes scalp",
+    "Ingredients": "Exosomes, Vitamin C, Biotin, Peptides, Rosemary & Eucalyptus Oils",
+    "Goals": "Hair regrowth, Scalp health",
+    "Image URL": "https://meamoshop.com/wp-content/uploads/2025/11/15.jpg"
+  },
+  {
+    "Product": "HAIRNA Exosome Hair Fill",
+    "Benefits": "Scalp regeneration & follicle repair; Moisture balance; Enhanced hair density; Soothing & sensitivity relief",
+    "Ingredients": "ASC Exosomes, Biotinyl Tripeptide‑1, Panthenol, Copper Tripeptide‑1",
+    "Goals": "Hair regrowth, Scalp health",
+    "Image URL": "https://meamoshop.com/wp-content/uploads/2025/11/HAIRNA-Exosome-Hair-Fill.jpg"
+  },
+  {
+    "Product": "Dermaheal HL",
+    "Benefits": "Stimulates hair growth; Strengthens hair strands; Nourishes scalp; Improves follicle environment",
+    "Ingredients": "Hyaluronic Acid, Peptides, Vitamins",
+    "Goals": "Hair regrowth, Scalp health",
+    "Image URL": "https://meamoshop.com/wp-content/uploads/2022/06/35.jpg"
+  },
   {
     "Product": "2Xsome Skin & Hair Booster",
     "Benefits": "Revitalizes scalp + skin; Exosome‑driven regeneration; Supports follicle and skin renewal; Boosts hydration",
@@ -125,58 +344,61 @@ const productsData = [
     "Image URL": "https://meamoshop.com/wp-content/uploads/2022/07/15.jpg"
   }
 ];
-  function calculateRecommendations() {
-  const userSex = document.getElementById("userSex").value;
-  const beard = document.getElementById("beard").value;
-  const goalsSelect = document.getElementById("goals");
-  const selectedGoals = Array.from(goalsSelect.selectedOptions).map(opt => opt.value);
 
-  // Step 1: Score each product by number of matching goals
-  const scoredProducts = productsData.map(product => {
-    const productGoals = product.Goals.toLowerCase().split(",").map(g => g.trim());
+/* --- Navigation --- */
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+function goToFaceMap(){ showScreen('screen2'); }
+function backToInputs(){ showScreen('screen1'); }
+function backToFaceMap(){ showScreen('screen2'); }
+
+/* --- Recommendation calculation --- */
+function calculateRecommendations() {
+  const sex = document.getElementById('userSex').value;
+  const beard = document.getElementById('beard').value;
+  const goals = Array.from(document.getElementById('goals').selectedOptions).map(o=>o.value);
+  const skin = document.getElementById('skinState').value;
+  const sun = document.getElementById('sunExposure').value;
+  const season = document.getElementById('season').value;
+  const asymmetry = document.getElementById('asymmetry').value;
+  const events = document.getElementById('events').value;
+
+  let scoredProducts = productsData.map(product => {
     let score = 0;
-    selectedGoals.forEach(goal => {
-      if (productGoals.includes(goal)) score++;
-    });
+
+    const productGoals = product.Goals.toLowerCase().split(',').map(g=>g.trim());
+    goals.forEach(goal => { if(productGoals.includes(goal.toLowerCase())) score += 10; });
+
+    if(skin==='sensitive' && product.Ingredients.toLowerCase().includes('retinol')) score -= 5;
+    if((sun==='high' && season==='summer') && product.Ingredients.toLowerCase().includes('growth factors')) score -= 3;
+
     return {...product, score};
   });
 
-  // Step 2: Sort by score descending
-  scoredProducts.sort((a, b) => b.score - a.score);
-
-  // Step 3: Take top 3
-  const topProducts = scoredProducts.slice(0, 3);
-
-  // Step 4: Display results
-  displayRecommendations(topProducts);
+  scoredProducts.sort((a,b)=>b.score - a.score);
+  showRecommendations(scoredProducts.slice(0,5));
+  showScreen('screen3');
 }
-  function displayRecommendations(products) {
-  const container = document.getElementById("recommendations");
-  container.innerHTML = ""; // clear previous
 
-  products.forEach(product => {
-    const card = document.createElement("div");
-    card.className = "product-card";
-    
-    card.innerHTML = `
-      <img src="${product["Image URL"]}" alt="${product.Product}">
-      <h3>${product.Product}</h3>
-      <p><strong>Benefits:</strong> ${product.Benefits}</p>
-      <p><strong>Ingredients:</strong> ${product.Ingredients}</p>
-      <p><strong>Goals:</strong> ${product.Goals}</p>
+function showRecommendations(products){
+  const container = document.getElementById('recommendations');
+  container.innerHTML = '';
+  products.forEach(p=>{
+    const div = document.createElement('div');
+    div.className = 'product-card';
+    div.innerHTML = `
+      <img src="${p['Image URL']}" alt="${p.Product}">
+      <h3>${p.Product}</h3>
+      <p><b>Benefits:</b> ${p.Benefits}</p>
+      <p><b>Ingredients:</b> ${p.Ingredients}</p>
+      <p><b>Goals:</b> ${p.Goals}</p>
     `;
-
-    container.appendChild(card);
+    container.appendChild(div);
   });
-
-  // Add discount code info
-  const discount = document.createElement("p");
-  discount.style.fontWeight = "bold";
-  discount.style.textAlign = "center";
-  discount.style.marginTop = "15px";
-  discount.innerHTML = `Check all products at <a href="https://www.meamoshop.com" target="_blank">MeamoShop</a> with code <strong>JOSE</strong> for 15% off`;
-  container.appendChild(discount);
 }
 </script>
+
 </body>
 </html>
