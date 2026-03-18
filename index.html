@@ -94,7 +94,6 @@
 </div>
 
 <script>
-<script>
 const productsData = [
   {
     "Product": "Jeunetique EXO",
@@ -126,8 +125,58 @@ const productsData = [
     "Image URL": "https://meamoshop.com/wp-content/uploads/2022/07/15.jpg"
   }
 ];
-</script>
-</script>
+  function calculateRecommendations() {
+  const userSex = document.getElementById("userSex").value;
+  const beard = document.getElementById("beard").value;
+  const goalsSelect = document.getElementById("goals");
+  const selectedGoals = Array.from(goalsSelect.selectedOptions).map(opt => opt.value);
 
+  // Step 1: Score each product by number of matching goals
+  const scoredProducts = productsData.map(product => {
+    const productGoals = product.Goals.toLowerCase().split(",").map(g => g.trim());
+    let score = 0;
+    selectedGoals.forEach(goal => {
+      if (productGoals.includes(goal)) score++;
+    });
+    return {...product, score};
+  });
+
+  // Step 2: Sort by score descending
+  scoredProducts.sort((a, b) => b.score - a.score);
+
+  // Step 3: Take top 3
+  const topProducts = scoredProducts.slice(0, 3);
+
+  // Step 4: Display results
+  displayRecommendations(topProducts);
+}
+  function displayRecommendations(products) {
+  const container = document.getElementById("recommendations");
+  container.innerHTML = ""; // clear previous
+
+  products.forEach(product => {
+    const card = document.createElement("div");
+    card.className = "product-card";
+    
+    card.innerHTML = `
+      <img src="${product["Image URL"]}" alt="${product.Product}">
+      <h3>${product.Product}</h3>
+      <p><strong>Benefits:</strong> ${product.Benefits}</p>
+      <p><strong>Ingredients:</strong> ${product.Ingredients}</p>
+      <p><strong>Goals:</strong> ${product.Goals}</p>
+    `;
+
+    container.appendChild(card);
+  });
+
+  // Add discount code info
+  const discount = document.createElement("p");
+  discount.style.fontWeight = "bold";
+  discount.style.textAlign = "center";
+  discount.style.marginTop = "15px";
+  discount.innerHTML = `Check all products at <a href="https://www.meamoshop.com" target="_blank">MeamoShop</a> with code <strong>JOSE</strong> for 15% off`;
+  container.appendChild(discount);
+}
+</script>
 </body>
 </html>
