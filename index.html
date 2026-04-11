@@ -6,6 +6,13 @@
 <title>WanderByJose · Microneedling App</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-KN605CWPNT"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-KN605CWPNT');
+</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <style id="print-styles">
@@ -241,7 +248,7 @@ body {
 
 .welcome-about-btn {
   position: absolute;
-  bottom: 44px;
+  bottom: 48px;
   left: 0; right: 0;
   text-align: center;
   z-index: 2;
@@ -625,13 +632,16 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
   flex-shrink: 0;
+  justify-content: center;
 }
 
 .tab-row::-webkit-scrollbar { display: none; }
 
 .tab-btn {
-  flex: 0 0 auto;
-  padding: 10px 14px;
+  flex: 1 1 0;
+  min-width: 0;
+  text-align: center;
+  padding: 10px 8px;
   border: none;
   background: transparent;
   color: var(--text-muted);
@@ -651,7 +661,7 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
-/* Tab panels */
+@keyframes slideUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
 .tab-panel { display: none; }
 .tab-panel.active { display: block; animation: screenIn 0.4s ease forwards; }
 
@@ -1126,9 +1136,21 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
     <div class="brand-tagline">MICRONEEDLING APP</div>
     <div class="welcome-divider"></div>
     <p class="welcome-desc">
-      A personalised recommendation engine for microneedling depth, cartridge selection and sterile serums — based on your unique skin profile.
+      A personalised reference tool for microneedling depth, cartridge selection and serum guidance — based on your unique skin profile.
     </p>
-    <button class="btn-primary" onclick="goToQuestionnaire()">
+
+    <!-- Consent checkbox -->
+    <label id="consent-label" style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;margin-bottom:20px;max-width:280px;text-align:left;justify-content:center;margin-left:auto;margin-right:auto;">
+      <span style="position:relative;flex-shrink:0;margin-top:1px;">
+        <input type="checkbox" id="consent-check" onchange="toggleConsentBtn()" style="opacity:0;position:absolute;width:18px;height:18px;cursor:pointer;margin:0;z-index:1;">
+        <span id="consent-box" style="display:flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:4px;border:1.5px solid rgba(184,150,110,0.5);background:rgba(255,255,255,0.05);transition:all 0.2s;flex-shrink:0;">
+          <svg id="consent-tick" xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 10 10" style="opacity:0;transition:opacity 0.15s;"><polyline points="1.5,5 4,7.5 8.5,2.5" fill="none" stroke="#b8966e" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+      </span>
+      <span style="font-size:11px;color:rgba(255,255,255,0.45);line-height:1.8;">I understand this app is not medical advice.<br>I am over 18 and I use it entirely at my own risk.<br>Nothing here replaces a licensed professional.</span>
+    </label>
+
+    <button class="btn-primary" id="begin-btn" onclick="goToQuestionnaire()" disabled style="opacity:0.35;cursor:not-allowed;transition:opacity 0.3s;">
       Begin Assessment
       <span>→</span>
     </button>
@@ -1139,7 +1161,9 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
     </button>
   </div>
   <div class="welcome-disclaimer">
-    Personal use only · Not medical advice · Consult a professional before treating
+    This app is a personal reference tool based on independent research. It does not replace professional advice.<br>
+    If you have any skin conditions or health concerns, consult a dermatologist before microneedling.<br>
+    Personal use only · Not medical advice
   </div>
   <!-- Draft restore banner (hidden by default) -->
   <div id="draft-restore-banner" style="display:none;position:absolute;bottom:80px;left:50%;transform:translateX(-50%);width:calc(100% - 48px);max-width:360px;background:rgba(30,30,34,0.92);border:1px solid rgba(184,150,110,0.4);border-radius:14px;padding:14px 16px;backdrop-filter:blur(8px);align-items:center;gap:12px;z-index:10;">
@@ -1187,7 +1211,7 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
       <div style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;display:flex;align-items:center;gap:8px;">About this App <span style="flex:1;height:1px;background:rgba(184,150,110,0.2);display:block;"></span></div>
       <p style="font-size:13px;color:var(--text);line-height:1.7;margin-bottom:12px;">This tool was built for <strong>personal use</strong> — it reflects how I, Jose, assess and plan my own microneedling treatments. I built it to organise my thinking, track what works for my skin, and share the logic behind my routine with anyone curious about doing the same.</p>
       <p style="font-size:13px;color:var(--text);line-height:1.7;margin-bottom:12px;">The science behind every recommendation — needle depths, seasonal adjustments, serum timing, cartridge choices — has been extracted from the peer-reviewed sources listed below. They are shared here for full transparency so you can verify every decision this app makes.</p>
-      <p style="font-size:13px;color:var(--text);line-height:1.7;margin-bottom:16px;">Product recommendations point to <strong><a href="https://meamoshop.com" target="_blank" style="color:var(--gold);">MeamoShop</a></strong>, a Seoul-based K-beauty supplier I personally use and trust for professional-grade skin boosters and microneedling serums.</p>
+      <p style="font-size:13px;color:var(--text);line-height:1.7;margin-bottom:16px;">Product recommendations point to <strong><a href="https://meamoshop.com?coupon=jose" target="_blank" style="color:var(--gold);">MeamoShop</a></strong>, a Seoul-based K-beauty supplier I personally use and trust for professional-grade skin boosters and microneedling serums.</p>
       <div style="background:rgba(201,145,138,0.1);border:1px solid rgba(201,145,138,0.3);border-radius:10px;padding:14px 16px;">
         <div style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:#a05050;margin-bottom:6px;font-weight:600;">⚠ Disclaimer &amp; Liability</div>
         <p style="font-size:12px;color:#7a4040;line-height:1.6;margin:0;">This app is strictly for personal reference and informational purposes only. The recommendations are based on publicly available research and my own self-assessed treatments — they are <strong>not</strong> medical advice. I am not a dermatologist or healthcare professional. I accept no responsibility or liability for any outcomes resulting from the use of this information by others. Always consult a qualified dermatologist or medical professional before undertaking any microneedling procedure. You use this app entirely at your own risk.</p>
@@ -1204,7 +1228,7 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
           <div>
             <div style="font-size:12px;font-weight:600;color:var(--ink);margin-bottom:3px;">MeamoShop · code <span style="color:var(--gold);">JOSE</span></div>
             <div style="font-size:11px;color:var(--text-muted);margin-bottom:8px;">≥15% off every order — you save money, I earn a small credit at no extra cost to you.</div>
-            <a href="https://meamoshop.com" target="_blank" style="font-size:11px;color:var(--gold);font-weight:600;text-decoration:none;">meamoshop.com ↗</a>
+            <a href="https://meamoshop.com?coupon=jose" target="_blank" style="font-size:11px;color:var(--gold);font-weight:600;text-decoration:none;">meamoshop.com ↗</a>
           </div>
         </div>
         <div style="background:rgba(255,94,91,0.06);border:1.5px solid rgba(255,94,91,0.18);border-radius:var(--radius-sm);padding:16px;display:flex;align-items:center;gap:14px;">
@@ -1221,17 +1245,17 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
     <!-- Scientific Sources -->
     <div style="background:var(--white);border-radius:var(--radius);padding:24px;margin-bottom:16px;box-shadow:var(--shadow-sm);">
       <div style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;display:flex;align-items:center;gap:8px;">Scientific Sources <span style="flex:1;height:1px;background:rgba(184,150,110,0.2);display:block;"></span></div>
-      <p style="font-size:12px;color:var(--text-muted);line-height:1.6;margin-bottom:18px;">All depth recommendations, cartridge logic, seasonal adjustments, and serum timing are grounded in the following peer-reviewed publications and technical references.</p>
+      <p style="font-size:12px;color:var(--text-muted);line-height:1.6;margin-bottom:18px;">All depth recommendations, cartridge logic, seasonal adjustments, and serum timing are grounded in the following peer-reviewed publications.</p>
       <div style="display:flex;flex-direction:column;">
-        <div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid rgba(0,0,0,0.05);"><div style="font-size:12px;font-weight:700;color:var(--gold);flex-shrink:0;width:22px;">01</div><div style="font-size:12px;color:var(--text-muted);line-height:1.6;">Hou A et al. (2017) — Microneedling depth science and collagen induction review. <em>J Clin Aesthet Dermatol.</em> <a href="https://pubmed.ncbi.nlm.nih.gov/28979608/" target="_blank" style="color:var(--gold);text-decoration:none;font-weight:500;">PubMed ↗</a></div></div>
-        <div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid rgba(0,0,0,0.05);"><div style="font-size:12px;font-weight:700;color:var(--gold);flex-shrink:0;width:22px;">02</div><div style="font-size:12px;color:var(--text-muted);line-height:1.6;">Doddaballapur S. (2009) — Microneedling with dermaroller. <em>J Cutan Aesthet Surg.</em> <a href="https://pubmed.ncbi.nlm.nih.gov/20300358/" target="_blank" style="color:var(--gold);text-decoration:none;font-weight:500;">PubMed ↗</a></div></div>
-        <div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid rgba(0,0,0,0.05);"><div style="font-size:12px;font-weight:700;color:var(--gold);flex-shrink:0;width:22px;">03</div><div style="font-size:12px;color:var(--text-muted);line-height:1.6;">Kim YS et al. (2020) — Scalp microneedling for androgenetic alopecia. <em>Dermatol Ther.</em> <a href="https://pubmed.ncbi.nlm.nih.gov/32207537/" target="_blank" style="color:var(--gold);text-decoration:none;font-weight:500;">PubMed ↗</a></div></div>
-        <div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid rgba(0,0,0,0.05);"><div style="font-size:12px;font-weight:700;color:var(--gold);flex-shrink:0;width:22px;">04</div><div style="font-size:12px;color:var(--text-muted);line-height:1.6;">Alster TS, Graham PM. (2018) — Microneedling: a review and practical guide. <em>Dermatol Surg.</em> <a href="https://pubmed.ncbi.nlm.nih.gov/29261538/" target="_blank" style="color:var(--gold);text-decoration:none;font-weight:500;">PubMed ↗</a></div></div>
-        <div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid rgba(0,0,0,0.05);"><div style="font-size:12px;font-weight:700;color:var(--gold);flex-shrink:0;width:22px;">05</div><div style="font-size:12px;color:var(--text-muted);line-height:1.6;">Derminator 2 Technical Manual — Cartridge specifications and depth guidelines. <a href="https://owndoc.com/derminator/" target="_blank" style="color:var(--gold);text-decoration:none;font-weight:500;">owndoc.com ↗</a></div></div>
-        <div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid rgba(0,0,0,0.05);"><div style="font-size:12px;font-weight:700;color:var(--gold);flex-shrink:0;width:22px;">06</div><div style="font-size:12px;color:var(--text-muted);line-height:1.6;">Dr. Pen Official Documentation — Cartridge types and clinical applications. <a href="https://drpen.com.au/" target="_blank" style="color:var(--gold);text-decoration:none;font-weight:500;">drpen.com.au ↗</a></div></div>
-        <div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid rgba(0,0,0,0.05);"><div style="font-size:12px;font-weight:700;color:var(--gold);flex-shrink:0;width:22px;">07</div><div style="font-size:12px;color:var(--text-muted);line-height:1.6;">Badran KW, Nabili V. (2018) — Lasers, light, and ancillary techniques for rejuvenation. <em>Facial Plast Surg Clin North Am.</em> <a href="https://pubmed.ncbi.nlm.nih.gov/29080654/" target="_blank" style="color:var(--gold);text-decoration:none;font-weight:500;">PubMed ↗</a></div></div>
-        <div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid rgba(0,0,0,0.05);"><div style="font-size:12px;font-weight:700;color:var(--gold);flex-shrink:0;width:22px;">08</div><div style="font-size:12px;color:var(--text-muted);line-height:1.6;">Singh A, Yadav S. (2016) — Microneedling: advances and widening horizons. <em>Indian Dermatol Online J.</em> <a href="https://pubmed.ncbi.nlm.nih.gov/27559502/" target="_blank" style="color:var(--gold);text-decoration:none;font-weight:500;">PubMed ↗</a></div></div>
-        <div style="display:flex;gap:12px;padding:12px 0;"><div style="font-size:12px;font-weight:700;color:var(--gold);flex-shrink:0;width:22px;">09</div><div style="font-size:12px;color:var(--text-muted);line-height:1.6;">Guo S, Dipietro L. (2010) — Factors affecting wound healing. <em>J Dent Res.</em> Basis for seasonal &amp; UV depth adjustments. <a href="https://pubmed.ncbi.nlm.nih.gov/20139336/" target="_blank" style="color:var(--gold);text-decoration:none;font-weight:500;">PubMed ↗</a></div></div>
+        <div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid rgba(0,0,0,0.05);"><div style="font-size:12px;font-weight:700;color:var(--gold);flex-shrink:0;width:22px;">01</div><div style="font-size:12px;color:var(--text-muted);line-height:1.6;">Hou A et al. (2017) — Microneedling: a comprehensive review. <em>Dermatol Surg.</em> <a href="https://pubmed.ncbi.nlm.nih.gov/27755171/" target="_blank" style="color:var(--gold);text-decoration:none;font-weight:500;">PubMed ↗</a></div></div>
+        <div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid rgba(0,0,0,0.05);"><div style="font-size:12px;font-weight:700;color:var(--gold);flex-shrink:0;width:22px;">02</div><div style="font-size:12px;color:var(--text-muted);line-height:1.6;">Doddaballapur S. (2009) — Microneedling with dermaroller. <em>J Cutan Aesthet Surg.</em> <a href="https://pubmed.ncbi.nlm.nih.gov/20808602/" target="_blank" style="color:var(--gold);text-decoration:none;font-weight:500;">PubMed ↗</a></div></div>
+        <div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid rgba(0,0,0,0.05);"><div style="font-size:12px;font-weight:700;color:var(--gold);flex-shrink:0;width:22px;">03</div><div style="font-size:12px;color:var(--text-muted);line-height:1.6;">Dhurat R et al. (2013) — Microneedling + minoxidil vs minoxidil alone in androgenetic alopecia: randomised evaluator-blinded study. <em>Int J Trichology.</em> <a href="https://pubmed.ncbi.nlm.nih.gov/23960389/" target="_blank" style="color:var(--gold);text-decoration:none;font-weight:500;">PubMed ↗</a></div></div>
+        <div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid rgba(0,0,0,0.05);"><div style="font-size:12px;font-weight:700;color:var(--gold);flex-shrink:0;width:22px;">04</div><div style="font-size:12px;color:var(--text-muted);line-height:1.6;">Alster TS, Graham PM. (2018) — Microneedling: a review and practical guide. <em>Dermatol Surg.</em> <a href="https://pubmed.ncbi.nlm.nih.gov/28796657/" target="_blank" style="color:var(--gold);text-decoration:none;font-weight:500;">PubMed ↗</a></div></div>
+        <div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid rgba(0,0,0,0.05);"><div style="font-size:12px;font-weight:700;color:var(--gold);flex-shrink:0;width:22px;">05</div><div style="font-size:12px;color:var(--text-muted);line-height:1.6;">McCrudden MT et al. (2015) — Microneedle applications in improving skin appearance. <em>Exp Dermatol.</em> <a href="https://pubmed.ncbi.nlm.nih.gov/25600295/" target="_blank" style="color:var(--gold);text-decoration:none;font-weight:500;">PubMed ↗</a></div></div>
+        <div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid rgba(0,0,0,0.05);"><div style="font-size:12px;font-weight:700;color:var(--gold);flex-shrink:0;width:22px;">06</div><div style="font-size:12px;color:var(--text-muted);line-height:1.6;">Ramaut L et al. (2018) — Microneedling: where do we stand now? Systematic review. <em>J Plast Reconstr Aesthet Surg.</em> <a href="https://pubmed.ncbi.nlm.nih.gov/28690124/" target="_blank" style="color:var(--gold);text-decoration:none;font-weight:500;">PubMed ↗</a></div></div>
+        <div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid rgba(0,0,0,0.05);"><div style="font-size:12px;font-weight:700;color:var(--gold);flex-shrink:0;width:22px;">07</div><div style="font-size:12px;color:var(--text-muted);line-height:1.6;">Badran KW, Nabili V. (2018) — Lasers, microneedling, and platelet-rich plasma for skin rejuvenation and repair. <em>Facial Plast Surg Clin North Am.</em> <a href="https://pubmed.ncbi.nlm.nih.gov/30213427/" target="_blank" style="color:var(--gold);text-decoration:none;font-weight:500;">PubMed ↗</a></div></div>
+        <div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid rgba(0,0,0,0.05);"><div style="font-size:12px;font-weight:700;color:var(--gold);flex-shrink:0;width:22px;">08</div><div style="font-size:12px;color:var(--text-muted);line-height:1.6;">Singh A, Yadav S. (2016) — Microneedling: advances and widening horizons. <em>Indian Dermatol Online J.</em> <a href="https://pubmed.ncbi.nlm.nih.gov/27559496/" target="_blank" style="color:var(--gold);text-decoration:none;font-weight:500;">PubMed ↗</a></div></div>
+        <div style="display:flex;gap:12px;padding:12px 0;"><div style="font-size:12px;font-weight:700;color:var(--gold);flex-shrink:0;width:22px;">09</div><div style="font-size:12px;color:var(--text-muted);line-height:1.6;">Guo S, DiPietro LA. (2010) — Factors affecting wound healing. <em>J Dent Res.</em> <a href="https://pubmed.ncbi.nlm.nih.gov/20139336/" target="_blank" style="color:var(--gold);text-decoration:none;font-weight:500;">PubMed ↗</a></div></div>
       </div>
     </div>
 
@@ -1550,7 +1574,7 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
     <!-- STEP 7: Pain tolerance & lidocaine -->
     <div class="step-panel" id="step-7">
       <div class="section-label">Comfort & Numbing</div>
-      <h2 class="step-title">Pain tolerance &amp;<br><em>lidocaine</em></h2>
+      <h2 class="step-title">Pain tolerance &amp;<br><em>numbing cream</em></h2>
       <p class="step-subtitle">This shapes cartridge pin count and speed recommendations. There is no right answer — honest input gives you the best plan.</p>
 
       <div class="section-label mt-24">Pain Tolerance</div>
@@ -1572,7 +1596,7 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
         </div>
       </div>
 
-      <div class="section-label mt-24">Do you use / plan to use lidocaine?</div>
+      <div class="section-label mt-24">Do you use / plan to use numbing cream?</div>
       <p class="step-subtitle" style="margin-bottom:16px;">Topical anaesthetic cream (e.g. EMLA) applied 30–45 min before. Reduces sensation but may slightly affect skin texture during needling.</p>
       <div class="option-grid" style="grid-template-columns:1fr 1fr 1fr;">
         <div class="option-card" data-field="lidocaine" data-val="yes" onclick="selectOption(this)">
@@ -1606,6 +1630,41 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
 
 
 <!-- ============================================================
+     SCREEN 2b — DISCLAIMER ACKNOWLEDGEMENT
+     ============================================================ -->
+<div id="screen-disclaimer" class="screen">
+  <div style="min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:32px 24px;max-width:480px;margin:0 auto;">
+
+    <div style="text-align:center;margin-bottom:32px;">
+      <div style="font-size:36px;margin-bottom:12px;">⚠️</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;color:var(--ink);letter-spacing:0.05em;line-height:1.2;">Before you continue</div>
+    </div>
+
+    <div style="background:var(--white);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow-sm);margin-bottom:20px;">
+      <div style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:16px;">Not medical advice</div>
+      <p style="font-size:13px;color:var(--text);line-height:1.7;margin:0 0 14px;">This app reflects my personal research and experience as a DIY non-professional. It is not medical advice, not a clinical recommendation, and not a substitute for a qualified dermatologist or licensed skincare professional.</p>
+      <p style="font-size:13px;color:var(--text);line-height:1.7;margin:0 0 14px;">Microneedling carries real risks including infection, post-inflammatory hyperpigmentation, scarring and vascular injury if performed incorrectly. Always consult a professional before starting any protocol, especially if you have active skin conditions or underlying health concerns.</p>
+      <p style="font-size:13px;color:var(--text);line-height:1.7;margin:0;">The recommendations shown are based on publicly available academic literature and my own interpretation of it. You are solely responsible for any decisions you make. Use this app critically, as you would any non-professional source of information.</p>
+    </div>
+
+    <div style="background:rgba(184,150,110,0.08);border:1px solid rgba(184,150,110,0.25);border-radius:var(--radius-sm);padding:16px;margin-bottom:28px;">
+      <div style="font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:8px;">Affiliate disclosure</div>
+      <p style="font-size:12px;color:var(--text-muted);line-height:1.6;margin:0;">Products in this app link to MeamoShop. I am an affiliate and may earn a commission from purchases made through those links, at no extra cost to you. This does not influence the recommendations, which are based solely on your profile and goals.</p>
+    </div>
+
+    <button class="btn-primary" onclick="acknowledgeDisclaimer()" style="width:100%;justify-content:center;font-size:15px;padding:16px;">
+      I understand — show my results
+    </button>
+
+    <button onclick="showScreen('screen-q');showStep(7);" style="margin-top:12px;background:none;border:none;color:var(--text-muted);font-size:13px;cursor:pointer;text-align:center;width:100%;padding:8px;">
+      ← Go back
+    </button>
+
+  </div>
+</div>
+
+
+<!-- ============================================================
      SCREEN 3 — LOADING
      ============================================================ -->
 <div id="screen-loading" class="screen">
@@ -1633,14 +1692,18 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
     <!-- Tabs -->
     <div class="tab-row">
       <button class="tab-btn active" onclick="showTab('tab-quickplan', this)">💉 Your Rx</button>
-      <button class="tab-btn" onclick="showTab('tab-routine', this)">🗓 Routine</button>
       <button class="tab-btn" onclick="showTab('tab-guide', this)">📖 Guide</button>
-      <button class="tab-btn" onclick="showTab('tab-overview', this)">📋 Full Profile</button>
+      <button class="tab-btn" onclick="showTab('tab-routine', this)">🗓 Routine</button>
+      <button class="tab-btn" onclick="showTab('tab-overview', this)">📋 Overview</button>
       <button class="tab-btn" onclick="showTab('tab-about', this)">👤 About</button>
     </div>
 
     <!-- ========== TAB: YOUR RX ========== -->
     <div class="tab-panel active" id="tab-quickplan">
+
+      <div style="background:rgba(0,0,0,0.04);border-radius:10px;padding:11px 14px;margin-bottom:16px;font-size:11px;color:var(--text-muted);line-height:1.6;text-align:center;">
+        These are reference points based on personal research — not clinical guidelines.<br>Always start shallower than suggested and adjust to your own skin response. Nothing here replaces a licensed professional.
+      </div>
 
       <div id="qp-alert-area"></div>
 
@@ -1649,6 +1712,11 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
         <div class="param-card-title">Your Recommended Serums</div>
         <div id="qp-primary-product"></div>
       </div>
+
+      <!-- Compare button -->
+      <button id="compare-btn" onclick="openCompareSheet()" style="display:none;width:100%;background:none;border:1.5px solid rgba(184,150,110,0.4);border-radius:50px;padding:11px;font-size:13px;color:var(--gold);font-weight:600;cursor:pointer;margin-bottom:20px;font-family:'DM Sans',sans-serif;">
+        ⇄ Compare all picks
+      </button>
 
       <!-- Hair serum (conditional) -->
       <div id="qp-hair-product-wrap" style="display:none;">
@@ -1661,7 +1729,7 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
       <!-- Face map inline -->
       <div class="param-card">
         <div class="param-card-title">Face Map — Your Depths</div>
-        <div style="font-size:12px;color:var(--text-muted);margin-bottom:16px;">Tap any zone to see depth and cartridge. Values are calculated for your exact profile.</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:16px;">Tap any zone to see depth and cartridge. Values are calculated for your exact profile. Always start shallower than suggested — especially in your first sessions — and adjust based on your skin response.</div>
         <div class="face-map-container">
           <div class="face-svg-wrap">
             <svg id="face-svg-qp" viewBox="0 0 220 280" width="200" height="250" xmlns="http://www.w3.org/2000/svg">
@@ -1773,7 +1841,7 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
       <!-- Full face map -->
       <div class="face-map-wrap">
         <div class="face-map-title">Depth by Facial Zone</div>
-        <div class="face-map-sub">Tap any zone or use the list to see personalised depth and rationale.</div>
+        <div class="face-map-sub">Tap any zone or use the list to see personalised depth and rationale. Always start shallower than suggested — especially in your first sessions — and adjust based on your skin response.</div>
         <div class="face-map-container">
           <div class="face-svg-wrap">
             <svg id="face-svg" viewBox="0 0 220 280" width="220" height="280" xmlns="http://www.w3.org/2000/svg">
@@ -1862,7 +1930,7 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
         <div class="param-card-title">About This App</div>
         <div style="font-size:13px;color:var(--text);line-height:1.7;">
           <p style="margin-bottom:12px;">This tool was built for <strong>personal use</strong> — it reflects how I, Jose, assess and plan my own microneedling treatments. I built it to organise my thinking, track what works for my skin, and share the logic behind my routine with anyone curious about doing the same.</p>
-          <p style="margin-bottom:12px;">Product recommendations point to <strong><a href="https://meamoshop.com" target="_blank" style="color:var(--gold);">MeamoShop</a></strong>, a Seoul-based K-beauty supplier I personally use and trust for professional-grade skin boosters and microneedling serums.</p>
+          <p style="margin-bottom:12px;">Product recommendations point to <strong><a href="https://meamoshop.com?coupon=jose" target="_blank" style="color:var(--gold);">MeamoShop</a></strong>, a Seoul-based K-beauty supplier I personally use and trust for professional-grade skin boosters and microneedling serums.</p>
           <div style="background:rgba(201,145,138,0.1);border:1px solid rgba(201,145,138,0.3);border-radius:10px;padding:14px 16px;margin-top:4px;">
             <div style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:#a05050;margin-bottom:6px;font-weight:600;">⚠ Disclaimer</div>
             <p style="font-size:12px;color:#7a4040;line-height:1.6;margin:0;">This app is strictly for personal reference and informational purposes only. The recommendations are based on publicly available research and my own self-assessed treatments — they are <strong>not</strong> medical advice. I am not a dermatologist or healthcare professional. I accept no responsibility or liability for any outcomes resulting from the use of this information by others. Always consult a qualified dermatologist or medical professional before undertaking any microneedling procedure. You use this app entirely at your own risk.</p>
@@ -1885,8 +1953,8 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
               <div style="font-weight:600;color:var(--ink);font-size:13px;margin-bottom:4px;">Shop MeamoShop with code JOSE</div>
               <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px;line-height:1.5;">Use code <strong style="color:var(--gold);font-size:15px;letter-spacing:0.05em;">JOSE</strong> at checkout for a minimum <strong style="color:var(--gold);">15% discount</strong> on every order — you save money and support the channel at no extra cost to you.</div>
               <div style="display:flex;gap:10px;flex-wrap:wrap;">
-                <a href="https://meamoshop.com/microneedling/" target="_blank" style="display:inline-block;background:linear-gradient(135deg,#b8966e,#d4af7a);color:#fff;text-decoration:none;padding:10px 20px;border-radius:50px;font-size:12px;font-weight:600;letter-spacing:0.05em;">Microneedling Serums ↗</a>
-                <a href="https://meamoshop.com/skin-boosters/" target="_blank" style="display:inline-block;border:1.5px solid rgba(184,150,110,0.5);color:var(--gold);text-decoration:none;padding:10px 20px;border-radius:50px;font-size:12px;font-weight:500;">Skin Boosters ↗</a>
+                <a href="https://meamoshop.com/microneedling/?coupon=jose" target="_blank" style="display:inline-block;background:linear-gradient(135deg,#b8966e,#d4af7a);color:#fff;text-decoration:none;padding:10px 20px;border-radius:50px;font-size:12px;font-weight:600;letter-spacing:0.05em;">Microneedling Serums ↗</a>
+                <a href="https://meamoshop.com/skin-boosters/?coupon=jose" target="_blank" style="display:inline-block;border:1.5px solid rgba(184,150,110,0.5);color:var(--gold);text-decoration:none;padding:10px 20px;border-radius:50px;font-size:12px;font-weight:500;">Skin Boosters ↗</a>
               </div>
             </div>
           </div>
@@ -1916,14 +1984,14 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
 
       <div class="sources-section">
         <h3>Scientific References</h3>
-        <div class="source-item"><div class="source-num">01</div><div class="source-text">Hou A et al. (2017) — Microneedling depth science review. <em>J Clin Aesthet Dermatol.</em> <a href="https://pubmed.ncbi.nlm.nih.gov/28979608/" target="_blank">PubMed ↗</a></div></div>
-        <div class="source-item"><div class="source-num">02</div><div class="source-text">Doddaballapur S. (2009) — Microneedling with dermaroller. <em>J Cutan Aesthet Surg.</em> <a href="https://pubmed.ncbi.nlm.nih.gov/20300358/" target="_blank">PubMed ↗</a></div></div>
-        <div class="source-item"><div class="source-num">03</div><div class="source-text">Kim YS et al. (2020) — Scalp microneedling for androgenetic alopecia. <em>Dermatol Ther.</em> <a href="https://pubmed.ncbi.nlm.nih.gov/32207537/" target="_blank">PubMed ↗</a></div></div>
-        <div class="source-item"><div class="source-num">04</div><div class="source-text">Alster TS, Graham PM. (2018) — Microneedling: a review and practical guide. <em>Dermatol Surg.</em> <a href="https://pubmed.ncbi.nlm.nih.gov/29261538/" target="_blank">PubMed ↗</a></div></div>
-        <div class="source-item"><div class="source-num">05</div><div class="source-text">Derminator 2 Technical Manual — Cartridge specifications. <a href="https://owndoc.com/derminator/" target="_blank">owndoc.com ↗</a></div></div>
-        <div class="source-item"><div class="source-num">06</div><div class="source-text">Dr. Pen Official Documentation — Cartridge types. <a href="https://drpen.com.au/" target="_blank">drpen.com.au ↗</a></div></div>
-        <div class="source-item"><div class="source-num">07</div><div class="source-text">Badran KW, Nabili V. (2018) — Lasers, light, and ancillary techniques. <em>Facial Plast Surg Clin North Am.</em> <a href="https://pubmed.ncbi.nlm.nih.gov/29080654/" target="_blank">PubMed ↗</a></div></div>
-        <div class="source-item"><div class="source-num">08</div><div class="source-text">Singh A, Yadav S. (2016) — Microneedling: advances and widening horizons. <em>Indian Dermatol Online J.</em> <a href="https://pubmed.ncbi.nlm.nih.gov/27559502/" target="_blank">PubMed ↗</a></div></div>
+        <div class="source-item"><div class="source-num">01</div><div class="source-text">Hou A et al. (2017) — Microneedling: a comprehensive review. <em>Dermatol Surg.</em> <a href="https://pubmed.ncbi.nlm.nih.gov/27755171/" target="_blank">PubMed ↗</a></div></div>
+        <div class="source-item"><div class="source-num">02</div><div class="source-text">Doddaballapur S. (2009) — Microneedling with dermaroller. <em>J Cutan Aesthet Surg.</em> <a href="https://pubmed.ncbi.nlm.nih.gov/20808602/" target="_blank">PubMed ↗</a></div></div>
+        <div class="source-item"><div class="source-num">03</div><div class="source-text">Dhurat R et al. (2013) — Microneedling + minoxidil vs minoxidil alone in androgenetic alopecia: randomised evaluator-blinded study. <em>Int J Trichology.</em> <a href="https://pubmed.ncbi.nlm.nih.gov/23960389/" target="_blank">PubMed ↗</a></div></div>
+        <div class="source-item"><div class="source-num">04</div><div class="source-text">Alster TS, Graham PM. (2018) — Microneedling: a review and practical guide. <em>Dermatol Surg.</em> <a href="https://pubmed.ncbi.nlm.nih.gov/28796657/" target="_blank">PubMed ↗</a></div></div>
+        <div class="source-item"><div class="source-num">05</div><div class="source-text">McCrudden MT et al. (2015) — Microneedle applications in improving skin appearance. <em>Exp Dermatol.</em> <a href="https://pubmed.ncbi.nlm.nih.gov/25600295/" target="_blank">PubMed ↗</a></div></div>
+        <div class="source-item"><div class="source-num">06</div><div class="source-text">Ramaut L et al. (2018) — Microneedling: where do we stand now? Systematic review. <em>J Plast Reconstr Aesthet Surg.</em> <a href="https://pubmed.ncbi.nlm.nih.gov/28690124/" target="_blank">PubMed ↗</a></div></div>
+        <div class="source-item"><div class="source-num">07</div><div class="source-text">Badran KW, Nabili V. (2018) — Lasers, microneedling, and platelet-rich plasma for skin rejuvenation and repair. <em>Facial Plast Surg Clin North Am.</em> <a href="https://pubmed.ncbi.nlm.nih.gov/30213427/" target="_blank">PubMed ↗</a></div></div>
+        <div class="source-item"><div class="source-num">08</div><div class="source-text">Singh A, Yadav S. (2016) — Microneedling: advances and widening horizons. <em>Indian Dermatol Online J.</em> <a href="https://pubmed.ncbi.nlm.nih.gov/27559496/" target="_blank">PubMed ↗</a></div></div>
         <div class="source-item"><div class="source-num">09</div><div class="source-text">Guo S, Dipietro L. (2010) — Factors affecting wound healing. <em>J Dent Res.</em> <a href="https://pubmed.ncbi.nlm.nih.gov/20139336/" target="_blank">PubMed ↗</a></div></div>
       </div>
 
@@ -1943,6 +2011,7 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
     </button>
   </div>
 
+
 </div><!-- #screen-results -->
 
 
@@ -1954,6 +2023,28 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
     <div class="modal-handle"></div>
     <div id="modal-content"></div>
     <button class="modal-close-btn" onclick="closeModalBtn()">Close</button>
+  </div>
+</div>
+
+<!-- ============================================================
+     COMPARE SHEET — outside all .screen elements to escape transform stacking context
+     ============================================================ -->
+<div id="compare-overlay" onclick="handleCompareOverlayClick(event)" style="display:none;position:fixed;inset:0;background:rgba(13,13,16,0.55);z-index:500;align-items:flex-end;justify-content:center;">
+  <div id="compare-sheet" onclick="event.stopPropagation()" style="background:#fff;border-radius:20px 20px 0 0;width:100%;max-width:680px;max-height:82vh;display:flex;flex-direction:column;">
+    <div style="flex-shrink:0;padding:12px 0 0;text-align:center;"><div style="width:36px;height:4px;background:#e0d8ce;border-radius:2px;margin:0 auto;"></div></div>
+    <div style="flex-shrink:0;display:flex;justify-content:space-between;align-items:center;padding:12px 20px 6px;">
+      <div style="font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:#b8966e;font-weight:700;font-family:'DM Sans',sans-serif;">Compare products</div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div id="compare-swipe-hint" style="font-size:10px;color:#7a7a85;font-family:'DM Sans',sans-serif;">swipe ←→ to see all</div>
+        <button onclick="closeCompareSheet()" style="background:none;border:none;font-size:22px;color:#7a7a85;cursor:pointer;line-height:1;padding:0;">×</button>
+      </div>
+    </div>
+    <div style="flex:1;overflow:hidden;position:relative;min-height:200px;">
+      <div id="compare-scroll" style="overflow-x:auto;overflow-y:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;height:100%;padding:0 20px 24px;">
+        <div id="compare-grid-inner" style="padding-top:8px;"></div>
+      </div>
+      <div id="compare-fade" style="position:absolute;right:0;top:0;bottom:0;width:32px;background:linear-gradient(to right,transparent,rgba(255,255,255,0.95));pointer-events:none;transition:opacity 0.3s;"></div>
+    </div>
   </div>
 </div>
 
@@ -1983,7 +2074,7 @@ const PRODUCTS = [
     ingredients: "Sodium Hyaluronate (HA)",
     timing: "Apply immediately post-needling while microchannels are open. Layer generously.",
     emoji: "💧",
-    url: "https://meamoshop.com/microneedling/hyaron/",
+    url: "https://meamoshop.com/microneedling/hyaron/?coupon=jose",
     bestFor: "Anyone wanting immediate post-session hydration, first-timers, or as a base layer before other serums.",
     noMixWith: [],
     image: "https://meamoshop.com/wp-content/uploads/2022/04/Hyaron-syringes.jpg"
@@ -2004,7 +2095,7 @@ const PRODUCTS = [
     ingredients: "Exosomes (1.3 billion/ml — lactobacilli, Panax ginseng, Centella asiatica), PDRN (3%), Sodium Hyaluronate (7%), Atelocollagen, Cellular Growth Factors, Ultra-Short Peptides",
     timing: "Apply immediately post-needling. Course of 3 sessions at 3–4 week intervals for cumulative anti-aging and regeneration results.",
     emoji: "🔬",
-    url: "https://meamoshop.com/microneedling/jeunetique-exo/",
+    url: "https://meamoshop.com/microneedling/jeunetique-exo/?coupon=jose",
     bestFor: "Those prioritising deep anti-aging, scar revision, or maximum post-needling recovery. MeamoShop's highest-rated serum.",
     noMixWith: [],
     image: "https://meamoshop.com/wp-content/uploads/2024/10/NEW-Jeunetique-Exo-1.jpg"
@@ -2023,7 +2114,7 @@ const PRODUCTS = [
     ingredients: "NAD+, NMN (Nicotinamide Mononucleotide), Plant-Derived Exosomes, PDRN, Atelocollagen, Hyaluronic Acid (HA), Growth Factors, Ultra-Short Peptides",
     timing: "Apply immediately post-needling. Results intensify across sessions — course of 3 recommended.",
     emoji: "⚡",
-    url: "https://meamoshop.com/newly-curated/jeunetique-nad/",
+    url: "https://meamoshop.com/newly-curated/jeunetique-nad/?coupon=jose",
     bestFor: "Mature skin (40s+) targeting cellular energy decline, or anyone wanting the most comprehensive multi-pathway anti-aging formula.",
     noMixWith: [],
     image: "https://meamoshop.com/wp-content/uploads/2026/01/Jeunetique-NAD-1.jpg"
@@ -2045,7 +2136,7 @@ const PRODUCTS = [
     ingredients: "Polycaprolactone (PCL 20%), Hyaluronic Acid (HA 1%)",
     timing: "Apply during and immediately after needling. Course of 3–4 sessions at 4-week intervals. KEEP SHALLOW at temples, glabella, nasal sides, and perioral zones.",
     emoji: "💧",
-    url: "https://meamoshop.com/microneedling/miracle-h/",
+    url: "https://meamoshop.com/microneedling/miracle-h/?coupon=jose",
     bestFor: "Those wanting long-lasting collagen stimulation (up to 12 months) with hydration. Use as a standalone serum — do not mix with PN or exosome serums in the same session.",
     noMixWith: [5, 6],
     image: "https://meamoshop.com/wp-content/uploads/2022/04/Miracle-H_1-1.jpg"
@@ -2065,7 +2156,7 @@ const PRODUCTS = [
     ingredients: "Polycaprolactone (PCL)",
     timing: "Apply at 0.75–1.5mm on cheeks, jawline, forehead only. AVOID: periorbital, perioral, temples, glabella. Course of 3–4 sessions at 4-week intervals.",
     emoji: "🏆",
-    url: "https://meamoshop.com/microneedling/miracle-l/",
+    url: "https://meamoshop.com/microneedling/miracle-l/?coupon=jose",
     bestFor: "Mature skin with laxity or sagging, seeking lifting and firming over hydration. Use as a standalone — do not combine with other serums.",
     noMixWith: [4, 6],
     image: "https://meamoshop.com/wp-content/uploads/2022/04/Miracle-L_1.jpg"
@@ -2085,7 +2176,7 @@ const PRODUCTS = [
     ingredients: "Polycaprolactone (PCL), Acetyl Hexapeptide-8, Peptide Complex",
     timing: "Apply during and immediately after needling. Use as standalone — do not mix. Course of 3 sessions. AVOID vascular-risk zones beyond 0.5mm.",
     emoji: "🌟",
-    url: "https://meamoshop.com/microneedling/miracle-x/",
+    url: "https://meamoshop.com/microneedling/miracle-x/?coupon=jose",
     bestFor: "Those wanting a combined collagen + expression-smoothing effect. Use strictly as a standalone — do not mix with any other serum.",
     noMixWith: [4, 5],
     image: "https://meamoshop.com/wp-content/uploads/2025/11/1-1.jpg"
@@ -2104,7 +2195,7 @@ const PRODUCTS = [
     ingredients: "Peptides, Niacinamide (Vitamin B3), Ascorbic Acid (Vitamin C), XT80 Complex",
     timing: "Apply during and immediately after needling on brightening-focused sessions.",
     emoji: "✨",
-    url: "https://meamoshop.com/microneedling/miracle-touch-br/",
+    url: "https://meamoshop.com/microneedling/miracle-touch-br/?coupon=jose",
     bestFor: "Anyone targeting UV damage, freckles, age spots, or post-inflammatory hyperpigmentation. Can be combined with HA for added comfort.",
     noMixWith: [],
     image: "https://meamoshop.com/wp-content/uploads/2022/04/Touch-BR_1.jpg"
@@ -2125,7 +2216,7 @@ const PRODUCTS = [
     ingredients: "PDRN (Polydeoxyribonucleotide), Peptides, Hyaluronic Acid (HA)",
     timing: "Apply immediately post-needling. Course of 3 sessions at 3–4 week intervals.",
     emoji: "🔬",
-    url: "https://meamoshop.com/microneedling/curenex/",
+    url: "https://meamoshop.com/microneedling/curenex/?coupon=jose",
     bestFor: "Post-procedure recovery, redness reduction, or texture improvement. Safe for sensitive skin. A reliable everyday regeneration serum.",
     noMixWith: [],
     image: "https://meamoshop.com/wp-content/uploads/2023/10/Curenex-e1732073067298.png"
@@ -2144,7 +2235,7 @@ const PRODUCTS = [
     ingredients: "Polynucleotides (PN), Sodium Chloride",
     timing: "Apply during or immediately after needling. Course of 3–4 sessions at 3–4 week intervals.",
     emoji: "🌊",
-    url: "https://meamoshop.com/microneedling/rejuran-healer-true-skin/",
+    url: "https://meamoshop.com/microneedling/rejuran-healer-true-skin/?coupon=jose",
     bestFor: "Those prioritising skin healing, UV repair, and structural restoration. The gold-standard PN serum — ideal for a dedicated recovery course.",
     noMixWith: [],
     image: "https://meamoshop.com/wp-content/uploads/2022/07/3-1024x1024.jpg"
@@ -2165,7 +2256,7 @@ const PRODUCTS = [
     ingredients: "EGF, FGF, IGF (11 total cell growth factors), Acetyl Hexapeptide-8, Palmitoyl Pentapeptide-4, Vitamin C, Niacinamide, Vitamins B2/B3/B12, Sodium Hyaluronate, Arbutin, Copper Tripeptide-1, Adenosine",
     timing: "Apply during and immediately after needling. 3 sessions at 2–4 week intervals.",
     emoji: "🌱",
-    url: "https://meamoshop.com/skin-boosters/velatox-gf11/",
+    url: "https://meamoshop.com/skin-boosters/velatox-gf11/?coupon=jose",
     bestFor: "Anyone wanting a multi-benefit post-needling serum addressing collagen, brightening, and antioxidant protection in one application.",
     noMixWith: [],
     image: "https://meamoshop.com/wp-content/uploads/2023/12/13.jpg"
@@ -2184,7 +2275,7 @@ const PRODUCTS = [
     ingredients: "Growth Factors, Peptides",
     timing: "Apply immediately post-needling as a recovery and anti-aging serum.",
     emoji: "🌿",
-    url: "https://meamoshop.com/microneedling/dermaheal-hsr/",
+    url: "https://meamoshop.com/microneedling/dermaheal-hsr/?coupon=jose",
     bestFor: "Sensitive or compromised skin in recovery. Good bridge serum between sessions or for those new to actives.",
     noMixWith: [],
     image: "https://meamoshop.com/wp-content/uploads/2022/06/34.jpg"
@@ -2205,7 +2296,7 @@ const PRODUCTS = [
     ingredients: "Exosomes, Hyaluronic Acid (HA)",
     timing: "Apply during or immediately after needling.",
     emoji: "⭐",
-    url: "https://meamoshop.com/newly-curated/hanheal-exosome-facial-rejuvenation/",
+    url: "https://meamoshop.com/newly-curated/hanheal-exosome-facial-rejuvenation/?coupon=jose",
     bestFor: "Maintenance sessions or anyone wanting a gentle exosome boost for hydration and glow without aggressive anti-aging actives.",
     noMixWith: [],
     image: "https://meamoshop.com/wp-content/uploads/2026/01/HANHEAL-FACIAL-REJ.jpg"
@@ -2226,7 +2317,7 @@ const PRODUCTS = [
     ingredients: "Polynucleotides (PN 25mg/mL)",
     timing: "Apply during and immediately after needling. Course of 3 sessions, 3–4 weeks apart.",
     emoji: "⭐",
-    url: "https://meamoshop.com/microneedling/youthfill-pn/",
+    url: "https://meamoshop.com/microneedling/youthfill-pn/?coupon=jose",
     bestFor: "Those targeting skin laxity and collagen rebuilding with a straightforward PN-only formula. Good choice for a first PN course.",
     noMixWith: [],
     image: "https://meamoshop.com/wp-content/uploads/2024/10/YouthFill-PN-Front-1.jpg"
@@ -2245,7 +2336,7 @@ const PRODUCTS = [
     ingredients: "Polynucleotides (PN 20mg/mL), Hyaluronic Acid (HA 10mg/mL), Lidocaine (3mg/mL)",
     timing: "Apply during and immediately after needling. Full-face treatments recommended minimum 2mL.",
     emoji: "💫",
-    url: "https://meamoshop.com/microneedling/youthfill-pn-plus/",
+    url: "https://meamoshop.com/microneedling/youthfill-pn-plus/?coupon=jose",
     bestFor: "Same as YouthFill PN but with added HA for immediate plumping — better choice if hydration is also a priority alongside regeneration.",
     noMixWith: [],
     image: "https://meamoshop.com/wp-content/uploads/2024/10/YouthFill-PN-Front.jpg"
@@ -2264,7 +2355,7 @@ const PRODUCTS = [
     ingredients: "Polynucleotides (PN)",
     timing: "Apply immediately post-needling.",
     emoji: "🌿",
-    url: "https://meamoshop.com/newly-curated/etrebelle-pn/",
+    url: "https://meamoshop.com/newly-curated/etrebelle-pn/?coupon=jose",
     bestFor: "Sensitive skin types wanting PN regeneration with minimal risk of irritation. Clean, gentle formula.",
     noMixWith: [],
     image: "https://meamoshop.com/wp-content/uploads/2026/01/Etrebelle-PN.jpg"
@@ -2283,7 +2374,7 @@ const PRODUCTS = [
     ingredients: "Polynucleotides (PN)",
     timing: "Apply immediately post-needling.",
     emoji: "✨",
-    url: "https://meamoshop.com/newly-curated/purihilo-pn/",
+    url: "https://meamoshop.com/newly-curated/purihilo-pn/?coupon=jose",
     bestFor: "Oily or combination skin wanting PN recovery with brightening. Works well for post-needling glow without heaviness.",
     noMixWith: [],
     image: "https://meamoshop.com/wp-content/uploads/2026/01/Puri-HILO-PN.jpg"
@@ -2302,7 +2393,7 @@ const PRODUCTS = [
     ingredients: "Peptides (Rh), Hyaluronic Acid (HA)",
     timing: "Apply during and immediately after needling.",
     emoji: "🏆",
-    url: "https://meamoshop.com/newly-curated/puri-coll-rh/",
+    url: "https://meamoshop.com/newly-curated/puri-coll-rh/?coupon=jose",
     bestFor: "Those specifically targeting firmness and structural collagen improvement with recombinant peptides. Best for dedicated collagen-induction sessions.",
     noMixWith: [],
     image: "https://meamoshop.com/wp-content/uploads/2026/01/Puri-COLL-Rh.jpg"
@@ -2323,7 +2414,7 @@ const PRODUCTS = [
     ingredients: "Exosomes, Vitamin C, Biotin, Peptides, Rosemary Oil, Eucalyptus Oil",
     timing: "Apply 24h after scalp microneedling. Do NOT apply immediately.",
     emoji: "💇",
-    url: "https://meamoshop.com/skin-boosters/hanheal-exosome-hair-filler/",
+    url: "https://meamoshop.com/skin-boosters/hanheal-exosome-hair-filler/?coupon=jose",
     bestFor: "Scalp microneedling sessions targeting hair thinning and follicle regeneration. Apply 24h after — not immediately.",
     noMixWith: [],
     image: "https://meamoshop.com/wp-content/uploads/2025/11/15.jpg"
@@ -2342,7 +2433,7 @@ const PRODUCTS = [
     ingredients: "ASC Exosomes, Biotinyl Tripeptide-1, Panthenol, Copper Tripeptide-1",
     timing: "Apply 24h after scalp microneedling at 0.5–0.75mm. Use weekly.",
     emoji: "🌱",
-    url: "https://meamoshop.com/skin-boosters/hairna-exosome-hair-fill/",
+    url: "https://meamoshop.com/skin-boosters/hairna-exosome-hair-fill/?coupon=jose",
     bestFor: "Scalp sessions with a focus on follicle miniaturisation and density. The ASC exosome formula is particularly targeted for androgenetic alopecia.",
     noMixWith: [],
     image: "https://meamoshop.com/wp-content/uploads/2025/11/HAIRNA-Exosome-Hair-Fill.jpg"
@@ -2361,7 +2452,7 @@ const PRODUCTS = [
     ingredients: "Hyaluronic Acid (HA), Peptides, Vitamins",
     timing: "Apply 24h after scalp microneedling. Apply daily between sessions.",
     emoji: "🔬",
-    url: "https://meamoshop.com/hair-treatment/dermaheal-hl/",
+    url: "https://meamoshop.com/hair-treatment/dermaheal-hl/?coupon=jose",
     bestFor: "Daily scalp maintenance between microneedling sessions. Use alongside any of the exosome scalp serums for amplified results.",
     noMixWith: [],
     image: "https://meamoshop.com/wp-content/uploads/2022/06/35.jpg"
@@ -2380,7 +2471,7 @@ const PRODUCTS = [
     ingredients: "Exosome Powder, PDRN, Sodium Hyaluronate (HA), Copper Tripeptide-1",
     timing: "Face: apply immediately post-needling. Scalp: apply 24h after scalp microneedling.",
     emoji: "💎",
-    url: "https://meamoshop.com/skin-boosters/2xsome/",
+    url: "https://meamoshop.com/skin-boosters/2xsome/?coupon=jose",
     bestFor: "Users running both face and scalp protocols who want one product that works for both. Versatile and cost-effective.",
     noMixWith: [],
     image: "https://meamoshop.com/wp-content/uploads/2022/07/15.jpg"
@@ -2449,6 +2540,19 @@ function showScreen(id) {
   }, 300);
 }
 
+function toggleConsentBtn() {
+  const checked = document.getElementById('consent-check').checked;
+  const btn = document.getElementById('begin-btn');
+  const box = document.getElementById('consent-box');
+  const tick = document.getElementById('consent-tick');
+  btn.disabled = !checked;
+  btn.style.opacity = checked ? '1' : '0.35';
+  btn.style.cursor = checked ? 'pointer' : 'not-allowed';
+  box.style.borderColor = checked ? '#b8966e' : 'rgba(184,150,110,0.5)';
+  box.style.background = checked ? 'rgba(184,150,110,0.15)' : 'rgba(255,255,255,0.05)';
+  tick.style.opacity = checked ? '1' : '0';
+}
+
 function goToQuestionnaire() {
   showScreen('screen-q');
   currentStep = 1;
@@ -2466,6 +2570,9 @@ function restartApp() {
   document.getElementById('beard-section').style.display = 'none';
   const banner = document.getElementById('draft-restore-banner');
   if (banner) banner.style.display = 'none';
+  // Reset consent checkbox
+  const check = document.getElementById('consent-check');
+  if (check) { check.checked = false; toggleConsentBtn(); }
   currentStep = 1;
   updateProgress();
   showScreen('screen-welcome');
@@ -2496,9 +2603,13 @@ function nextStep() {
   if (currentStep < TOTAL_STEPS) {
     showStep(currentStep + 1);
   } else {
-    // Generate results
-    startLoading();
+    // Show disclaimer before generating results
+    showScreen('screen-disclaimer');
   }
+}
+
+function acknowledgeDisclaimer() {
+  startLoading();
 }
 
 function prevStep() {
@@ -2655,12 +2766,6 @@ function buildAlerts() {
   const u = userData;
   const states = u.skinstate;
 
-  // Discount code banner — always shown
-  area.innerHTML += `<div class="alert-card info" style="background:rgba(184,150,110,0.12);border-color:rgba(184,150,110,0.4);color:#7a5c30;margin-bottom:20px;">
-    <div class="alert-icon">🏷️</div>
-    <div><strong>Save on MeamoShop</strong> — Use code <strong style="font-size:15px;letter-spacing:0.08em;color:#b8966e">JOSE</strong> at checkout for a minimum 15% discount on all recommended products. <a href="https://meamoshop.com" target="_blank" style="color:#b8966e;font-weight:600;">Shop meamoshop.com ↗</a></div>
-  </div>`;
-
   if (u.event === '<7') {
     area.innerHTML += `<div class="alert-card warn"><div class="alert-icon">⚠️</div><div>You have an event within 7 days. Depths have been reduced to a maximum of 0.25mm. Redness and swelling may still occur. Consider delaying your session.</div></div>`;
   }
@@ -2678,6 +2783,7 @@ function buildAlerts() {
   }
   if (u.intent === 'deep') {
     area.innerHTML += `<div class="alert-card warn"><div class="alert-icon">🔩</div><div><strong>Deep collagen induction selected.</strong> Depths have been increased where anatomy safely allows. Expect 4–7 days of redness and downtime. Ensure no events within 7 days. Do not select deep intent if this is your first session.</div></div>`;
+    area.innerHTML += `<div class="alert-card warn"><div class="alert-icon">🩸</div><div><strong>PCL products excluded.</strong> Miracle H, Miracle L and Miracle X carry vascular occlusion risk at deep depths and have been removed from your suggestions. Safer alternatives have been selected.</div></div>`;
   }
   if (u.intent === 'superficial') {
     area.innerHTML += `<div class="alert-card info"><div class="alert-icon">🌸</div><div><strong>Superficial treatment selected.</strong> Depths reduced for a glow-focused session with minimal downtime. Ideal for maintenance or before events. Collagen induction is limited at these depths.</div></div>`;
@@ -2921,7 +3027,8 @@ function selectZone(zoneName, mapId) {
       const goalMatch = goals.filter(g => g !== 'hair').length === 0 || p.goals.some(g => goals.includes(g) && g !== 'hair');
       const notHairOnly = !p.goals.every(g => g === 'hair');
       const skinOk = !states.some(s => p.avoidIf.includes(s));
-      return goalMatch && notHairOnly && skinOk;
+      const vascularOk = !(p.vascularRisk && userData.intent === 'deep');
+      return goalMatch && notHairOnly && skinOk && vascularOk;
     });
     facialCandidates.sort((a,b) => { const pd=(b.priority||1)-(a.priority||1); return pd!==0?pd:b.goals.filter(g=>goals.includes(g)).length-a.goals.filter(g=>goals.includes(g)).length; });
     const top3 = facialCandidates.slice(0, 3);
@@ -3056,7 +3163,8 @@ function buildQuickPlan() {
     const goalMatch = goals.filter(g => g !== 'hair').length === 0 || p.goals.some(g => goals.includes(g) && g !== 'hair');
     const notHairOnly = !p.goals.every(g => g === 'hair');
     const skinOk = !states.some(s => p.avoidIf.includes(s));
-    return goalMatch && notHairOnly && skinOk;
+    const vascularOk = !(p.vascularRisk && userData.intent === 'deep');
+    return goalMatch && notHairOnly && skinOk && vascularOk;
   });
   facialProducts.sort((a,b) => { const priDiff = (b.priority||1) - (a.priority||1); if (priDiff !== 0) return priDiff; return b.goals.filter(g => goals.includes(g)).length - a.goals.filter(g => goals.includes(g)).length; });
   const top3 = facialProducts.slice(0, 3);
@@ -3114,15 +3222,17 @@ function buildQuickPlan() {
     }).join('');
   }
 
+  // Store top3 globally for compare sheet
+  window._compareProducts = top3;
+  const compareBtn = document.getElementById('compare-btn');
+  if (compareBtn) compareBtn.style.display = top3.length > 1 ? 'block' : 'none';
+
   const primaryEl = document.getElementById('qp-primary-product');
   if (primaryEl) {
     if (top3.length === 0) {
       primaryEl.innerHTML = '<p style="color:var(--text-muted);font-size:13px;">No products matched your selection. Please review your goals.</p>';
     } else {
-      const joseBanner = `<div style="background:linear-gradient(135deg,rgba(184,150,110,0.1),rgba(184,150,110,0.04));border:1.5px solid rgba(184,150,110,0.28);border-radius:var(--radius-sm);padding:11px 14px;margin-bottom:20px;display:flex;gap:10px;align-items:center;">
-        <span style="font-size:18px;flex-shrink:0;">🏷️</span>
-        <div style="font-size:12px;color:var(--text-muted);">All products from <a href="https://meamoshop.com" target="_blank" style="color:var(--gold);font-weight:600;">meamoshop.com</a> — use code <strong style="color:var(--gold);font-size:14px;letter-spacing:0.04em;">JOSE</strong> at checkout for ≥15% off.</div>
-      </div>`;
+      const joseBanner = '';
 
       // No-mix conflict check
       const conflicts = checkNoMixConflicts(top3);
@@ -3134,14 +3244,21 @@ function buildQuickPlan() {
       }
 
       primaryEl.innerHTML = joseBanner + noMixHtml + top3.map((p, i) => `
-        <div style="padding:${i > 0 ? '20px 0 0' : '0'} 0;${i > 0 ? 'border-top:1px solid rgba(0,0,0,0.06);margin-top:20px;' : ''}">
+        <div style="${i === 0
+            ? 'border:1.5px solid rgba(184,150,110,0.45);border-radius:14px;padding:16px;background:rgba(184,150,110,0.04);margin-bottom:4px;'
+            : 'padding:16px 0 0;margin-top:4px;border-top:1px solid rgba(0,0,0,0.06);opacity:0.85;'}">
+          ${i === 0 ? '<div style="font-size:9px;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:10px;">⭐ Primary Recommendation</div>' : ''}
           <div style="display:flex;gap:14px;align-items:flex-start;margin-bottom:12px;cursor:pointer;" onclick="openProductModal(${p.id})">
-            <img src="${proxyImg(p.image)}" alt="${p.name}" style="width:72px;height:72px;object-fit:cover;border-radius:10px;flex-shrink:0;background:var(--mist2);display:block;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
-            <div style="display:none;width:72px;height:72px;border-radius:10px;flex-shrink:0;background:linear-gradient(135deg,#ece9e4,#f4f2ef);align-items:center;justify-content:center;font-size:28px;">${p.emoji}</div>
+            <img src="${proxyImg(p.image)}" alt="${p.name}" style="width:${i === 0 ? '80' : '60'}px;height:${i === 0 ? '80' : '60'}px;object-fit:cover;border-radius:10px;flex-shrink:0;background:var(--mist2);display:block;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+            <div style="display:none;width:${i === 0 ? '80' : '60'}px;height:${i === 0 ? '80' : '60'}px;border-radius:10px;flex-shrink:0;background:linear-gradient(135deg,#ece9e4,#f4f2ef);align-items:center;justify-content:center;font-size:${i === 0 ? '28' : '22'}px;">${p.emoji}</div>
             <div style="flex:1;min-width:0;">
-              <div style="font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);margin-bottom:2px;">${i === 0 ? '⭐ Primary Pick' : i === 1 ? '2nd Choice' : '3rd Choice'} · ${p.category}</div>
-              <div style="font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:500;color:var(--ink);line-height:1.2;margin-bottom:2px;">${p.name}</div>
-              <div style="font-size:11px;color:var(--text-muted);">${p.brand}</div>
+              <div style="font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:${i === 0 ? 'var(--gold)' : 'var(--text-muted)'};margin-bottom:2px;">${i === 0 ? p.category : (i === 1 ? '2nd Choice' : '3rd Choice') + ' · ' + p.category}</div>
+              <div style="font-family:'Cormorant Garamond',serif;font-size:${i === 0 ? '21' : '17'}px;font-weight:500;color:var(--ink);line-height:1.2;margin-bottom:2px;">${p.name}</div>
+              <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px;">${p.brand}</div>
+              <div style="font-size:10px;color:var(--text-muted);">
+                ${goals.filter(g => p.goals.includes(g)).length} / ${goals.length || 1} goals matched
+                · ${p.priority === 3 ? '<span style="color:#1e8449;font-weight:600;">Advanced formula</span>' : p.priority === 2 ? 'Standard formula' : 'Entry formula'}
+              </div>
             </div>
           </div>
           <div style="background:rgba(184,150,110,0.05);border-radius:10px;padding:12px 14px;margin-bottom:10px;">
@@ -3158,7 +3275,10 @@ function buildQuickPlan() {
             🩸 <strong>Vascular caution — PCL product</strong><br>
             Keep depth at <strong>≤0.5mm</strong> over temples, forehead/glabella, perioral, and nasal sides. Max <strong>0.25mm</strong> periorbital. Do not stall the device — keep moving. Stop immediately if you notice blanching or unusual pain.
           </div>` : ''}
-        </div>`).join('');
+        </div>`).join('')
+        + `<div style="margin-top:20px;padding-top:14px;border-top:1px solid rgba(0,0,0,0.06);text-align:center;font-size:11px;color:var(--text-muted);">
+            All products at <a href="https://meamoshop.com?coupon=jose" target="_blank" style="color:var(--gold);font-weight:600;">meamoshop.com</a> — code <strong style="color:var(--gold);letter-spacing:0.05em;">JOSE</strong> for ≥15% off
+          </div>`;
     }
   }
 
@@ -3243,7 +3363,8 @@ function buildRoutine() {
     const goalMatch = goals.filter(g => g !== 'hair').length === 0 || p.goals.some(g => goals.includes(g) && g !== 'hair');
     const notHairOnly = !p.goals.every(g => g === 'hair');
     const skinOk = !states.some(s => p.avoidIf.includes(s));
-    return goalMatch && notHairOnly && skinOk;
+    const vascularOk = !(p.vascularRisk && u.intent === 'deep');
+    return goalMatch && notHairOnly && skinOk && vascularOk;
   });
   facialProds.sort((a,b) => { const priDiff = (b.priority||1) - (a.priority||1); if (priDiff !== 0) return priDiff; return b.goals.filter(g => goals.includes(g)).length - a.goals.filter(g => goals.includes(g)).length; });
   const primarySerum = facialProds[0] ? facialProds[0].name : 'your recommended serum';
@@ -3506,7 +3627,8 @@ function saveAsImage() {
     const gm = goals.filter(g=>g!=='hair').length===0||p.goals.some(g=>goals.includes(g)&&g!=='hair');
     const nh = !p.goals.every(g=>g==='hair');
     const sk = !states.some(s=>p.avoidIf.includes(s));
-    return gm&&nh&&sk;
+    const vk = !(p.vascularRisk && u.intent === 'deep');
+    return gm&&nh&&sk&&vk;
   });
   facialProds.sort((a,b)=>{const pd=(b.priority||1)-(a.priority||1);return pd!==0?pd:b.goals.filter(g=>goals.includes(g)).length-a.goals.filter(g=>goals.includes(g)).length;});
   const top3 = facialProds.slice(0,3);
@@ -3753,6 +3875,157 @@ function checkNoMixConflicts(top3) {
     }
   }
   return conflicts;
+}
+
+/* ============================================================
+   COMPARE SHEET
+   ============================================================ */
+function openCompareSheet() {
+  const products = window._compareProducts || [];
+  if (products.length < 2) return;
+
+  try { buildCompareGrid(products); } catch(e) { console.error('Compare grid error:', e); return; }
+
+  const overlay = document.getElementById('compare-overlay');
+  if (!overlay) return;
+  overlay.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+
+  const scroll = document.getElementById('compare-scroll');
+  if (scroll) {
+    scroll.onscroll = function() {
+      const fade = document.getElementById('compare-fade');
+      const hint = document.getElementById('compare-swipe-hint');
+      if (fade) fade.style.opacity = scroll.scrollLeft > 20 ? '0' : '1';
+      if (hint) hint.style.opacity = scroll.scrollLeft > 20 ? '0' : '1';
+    };
+  }
+}
+
+function closeCompareSheet() {
+  const overlay = document.getElementById('compare-overlay');
+  overlay.style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+function handleCompareOverlayClick(e) {
+  if (e.target === document.getElementById('compare-overlay')) closeCompareSheet();
+}
+
+function buildCompareGrid(products) {
+  const goals = userData.goals;
+  const states = userData.skinstate;
+  const isSensitive = states.includes('sensitive') || states.includes('rosacea');
+  const gold = '#b8966e';
+  const ink = '#1a1a1e';
+  const muted = '#7a7a85';
+  const border = 'rgba(0,0,0,0.05)';
+
+  // Col widths — responsive
+  const isWide = window.innerWidth >= 600;
+  const keyW = isWide ? '120px' : '90px';
+  const colW = isWide ? '180px' : '140px';
+  const fs = isWide ? '12px' : '11px';
+  const fsSmall = isWide ? '11px' : '10px';
+
+  // Dot helper
+  const dot = (ok) => ok
+    ? '<div style="width:10px;height:10px;border-radius:50%;background:#1e8449;margin:0 auto;"></div>'
+    : '<div style="width:10px;height:10px;border-radius:50%;background:#e0d8ce;margin:0 auto;"></div>';
+
+  // Header row
+  const labels = ['Primary', '2nd choice', '3rd choice'];
+  let html = '<table style="border-collapse:collapse;min-width:max-content;">';
+
+  // Product headers
+  html += '<thead><tr><th style="width:' + keyW + ';min-width:' + keyW + ';"></th>';
+  products.forEach(function(p, i) {
+    const isPrimary = i === 0;
+    html += '<th style="width:' + colW + ';min-width:' + colW + ';padding:8px 12px 12px;text-align:center;border-bottom:2px solid ' + (isPrimary ? gold : border) + ';">'
+      + '<div style="width:40px;height:40px;border-radius:8px;background:#f0ebe4;display:flex;align-items:center;justify-content:center;font-size:18px;margin:0 auto 6px;">' + p.emoji + '</div>'
+      + '<div style="font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:' + (isPrimary ? gold : muted) + ';font-weight:700;margin-bottom:2px;">' + labels[i] + '</div>'
+      + '<div style="font-size:' + fs + ';font-weight:600;color:' + ink + ';line-height:1.2;">' + p.name + '</div>'
+      + '<div style="font-size:9px;color:' + muted + ';margin-top:2px;">' + p.category + '</div>'
+      + '</th>';
+  });
+  html += '</tr></thead><tbody>';
+
+  // Row helper
+  function row(label, cells) {
+    let r = '<tr><td style="padding:9px 12px 9px 0;font-size:' + fsSmall + ';color:' + muted + ';white-space:nowrap;border-bottom:1px solid ' + border + ';vertical-align:middle;">' + label + '</td>';
+    cells.forEach(function(c, i) {
+      const isWinner = i === 0;
+      r += '<td style="padding:9px 12px;text-align:center;border-bottom:1px solid ' + border + ';vertical-align:middle;">' + c + '</td>';
+    });
+    return r + '</tr>';
+  }
+
+  // Priority label helper
+  function priorityLabel(p) {
+    if (p.priority === 3) return '<span style="font-size:' + fsSmall + ';color:#1e8449;font-weight:600;">Advanced</span>';
+    if (p.priority === 2) return '<span style="font-size:' + fsSmall + ';color:' + ink + ';">Standard</span>';
+    return '<span style="font-size:' + fsSmall + ';color:' + muted + ';">Entry</span>';
+  }
+
+  // Goals matched
+  const goalsMatched = products.map(function(p) {
+    const count = goals.filter(function(g) { return p.goals.includes(g); }).length;
+    const total = goals.length || 1;
+    const isTop = count === Math.max.apply(null, products.map(function(x) { return goals.filter(function(g) { return x.goals.includes(g); }).length; }));
+    return '<span style="font-size:' + fs + ';font-weight:700;color:' + (isTop ? gold : ink) + ';">' + count + ' / ' + total + '</span>';
+  });
+  html += row('Goals matched', goalsMatched);
+
+  // Formula tier
+  html += row('Formula tier', products.map(priorityLabel));
+
+  // Best for
+  const bestFor = products.map(function(p) {
+    return '<span style="font-size:' + fsSmall + ';color:' + ink + ';line-height:1.3;display:block;">' + (p.bestFor ? p.bestFor.split(',')[0].split('.')[0] : p.category) + '</span>';
+  });
+  html += row('Best for', bestFor);
+
+  // Sensitive skin
+  const sensRows = products.map(function(p) {
+    const ok = !p.avoidIf.includes('sensitive') && !p.avoidIf.includes('rosacea');
+    return dot(ok);
+  });
+  html += row('Sensitive skin', sensRows);
+
+  // Vascular risk
+  const vascRows = products.map(function(p) {
+    return dot(!p.vascularRisk);
+  });
+  html += row('No vascular risk', vascRows);
+
+  // Skin compatibility warning
+  if (isSensitive) {
+    const skinRows = products.map(function(p) {
+      const compatible = !states.some(function(s) { return p.avoidIf.includes(s); });
+      return dot(compatible);
+    });
+    html += row('Your skin state', skinRows);
+  }
+
+  // Shop buttons row
+  html += '<tr><td style="padding:14px 12px 4px 0;"></td>';
+  products.forEach(function(p, i) {
+    const isPrimary = i === 0;
+    html += '<td style="padding:14px 6px 4px;text-align:center;vertical-align:middle;">'
+      + '<a href="' + p.url + '" target="_blank" style="display:inline-block;background:' + (isPrimary ? gold : 'rgba(184,150,110,0.12)') + ';color:' + (isPrimary ? '#fff' : gold) + ';border-radius:50px;padding:8px 14px;font-size:11px;font-weight:600;text-decoration:none;white-space:nowrap;">Shop ↗</a>'
+      + '</td>';
+  });
+  html += '</tr>';
+
+  html += '</tbody></table>';
+
+  // Ranking explanation note
+  html += '<div style="margin-top:14px;padding:10px 12px;background:rgba(184,150,110,0.07);border-radius:8px;font-size:11px;color:#7a7a85;line-height:1.6;">'
+    + '<strong style="color:#1a1a1e;">Why this ranking?</strong> Products are ranked by two factors: how many of your goals they match, and formula tier. An advanced formula can rank above a standard one even with fewer goal matches — it covers more ground per session. Goals matched shows fit, formula tier shows potency.'
+    + '</div>';
+
+  const inner = document.getElementById('compare-grid-inner');
+  if (inner) inner.innerHTML = html;
 }
 
 /* ============================================================
